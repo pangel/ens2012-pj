@@ -37,6 +37,24 @@ public class GlobalData {
 		}
 		throw new IllegalArgumentException("unknown airport id");
 	}
+
+	Collection<FlightID> getWaitingPlanes (AirportID id) {
+		int i = 0;
+		while(AirportCharacteristics.get(i).id != id){
+			i++ 
+			}
+		return AirportCharacteristics.get(i).getWaitingsPlanes()
+		}
+
+	AirportStatus getStatus(AirportId id){	
+		int i = 0;
+		while(AirportCharacteristics.get(i).id != id){
+			i++ 
+			}
+		return AirportCharacteristics.get(i).getStatus()
+		}
+}
+
 	
 	
 }
