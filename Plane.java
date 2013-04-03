@@ -1,6 +1,12 @@
 import java.util.Date;
 
 public class Plane {
+	Plane(FlightID id, Airport source, Airport dest) {
+		id.setPlane(this);
+		this.id = id;
+		this.source = source;
+		this.dest = dest;
+	}
 	public Trajectory getTrajectory(){
 		return trajectory;
 	}
@@ -25,6 +31,9 @@ public class Plane {
 	public double getSpeed(){
 		return speed;
 	}
+	public Date getLandingDate() {
+		return landingDate;
+	}
 	
 	public void setTrajectory(Trajectory t){
 		trajectory = t;
@@ -35,6 +44,9 @@ public class Plane {
 	public void setTakeoffDate(Date d){
 		takeoffDate = d;
 	}
+	public void setLandingDate(Date d) {
+		landingDate = d;
+	}
 
 	private Trajectory trajectory;
 	private FlightStatus status;
@@ -42,5 +54,6 @@ public class Plane {
 	private double speed;
 	private Airport source, dest;
 	private Date takeoffDate;
+	private Date landingDate;
 	private FlightID id;
 }
