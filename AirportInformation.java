@@ -3,6 +3,7 @@ public class AirportInformation extends AirportCharacteristics {
 	public AirportInformation(AirportCharacteristics ac)
 	{
 		super(ac);
+		waitingplanes = new ArrayList();
 	}
 	AirportStatus getStatus(){
 		return status;
