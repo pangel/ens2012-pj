@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 
 public class GlobalData {
-<<<<<<< HEAD
     public GlobalData(){
 	    
 	}
@@ -20,7 +19,6 @@ public class GlobalData {
 	int i = 0;
 	while(AirportsCharacteristics.get(i).id != id){
 		    i++ ;
-=======
 	public Simulator simulator;
 	public GlobalData(){
 		
@@ -66,7 +64,7 @@ public class GlobalData {
 			i++ 
 			}
 		return AirportCharacteristics.get(i).getStatus()
->>>>>>> 9004d94fc3cf6967fdcb6bc8fed71c69c5254094
+
 		}
 		return AirportsCharacteristics.get(i).getWaitingsPlanes();
 		i = 0;
