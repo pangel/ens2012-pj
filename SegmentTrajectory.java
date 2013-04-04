@@ -3,12 +3,14 @@
  * set of adjacent segments.
  *
  */
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class SegmentTrajectory implements Trajectory {
 	List<Point3D> data;
 	Date startDate;
+<<<<<<< HEAD
     public void update (Plane plane, Date date, Date last_update)
     { 
 	trajectory trajectory = plane.trajectory;
@@ -31,3 +33,11 @@ public class SegmentTrajectory implements Trajectory {
     }
     
     }
+=======
+	SegmentTrajectory(Point3D start, Point3D dest) {
+		this.data = new ArrayList<Point3D>();
+		this.data.add(start);
+		this.data.add(dest);
+	}
+}
+>>>>>>> 9004d94fc3cf6967fdcb6bc8fed71c69c5254094
