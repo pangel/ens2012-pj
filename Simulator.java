@@ -1,25 +1,56 @@
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Simulator extends Thread implements SimulatorCommandInterface{
 	
 	private GlobalData globalData;
 	private Collection<Plane> planes;
-    private ConcurrentLinkedQueue<Runnable> transmissions;
+    private LinkedBlockingQueue<Runnable> transmissions;
     private Controller controller;
+    
+    public static void main(String args[]) throws InterruptedException {
+        GlobalData globalData = new GlobalData();
+        Simulator simulator = new Simulator(globalData);
+        Controller controller = new Controller((ControllerDataInterface) globalData);
+        
+        simulator.setController(controller);
+        simulator.setup();
 
-	public Simulator(){
+        simulator.start();
+
+        while(!Simulator.interrupted()) {
+        	controller.control();
+        }
+    }
+    
+    private void setup() {
+
+        this.controller.setSimulator(this);
+        this.globalData = new GlobalData();
+        Airport airportA = new Airport(new AirportCharacteristics("Airport A", new Point3D(0,0,0), 2));
+        Airport airportB = new Airport(new AirportCharacteristics("Airport B", new Point3D(10,10,0), 2));
+        this.globalData.airports.add(airportA);
+        this.globalData.airports.add(airportB);
+
+    }
+    
+	public Simulator(GlobalData globalData){
+		this.globalData = globalData;
 		this.planes = Collections.synchronizedSet(new HashSet());
-		this.transmissions = new ConcurrentLinkedQueue<Runnable>();
+		this.transmissions = new LinkedBlockingQueue<Runnable>();
+		
 	}
-	
 	/** This function runs the whole simulation updating the positions
 	 * of the planes, answering to the queries..*/
 	private void simulate(){
 		while (true) {
-			// FIXME: stop loop when poll empty. restart it when thread is scheduled.
-			Runnable transmission = this.transmissions.poll();
-			transmission.run();
+			if (Math.random() > 0.9) {
+//				System.out.println("go\n");
+			}
+			Runnable task;
+			task = this.transmissions.poll();
+			if (task != null) { task.run(); }
 		}
 	}
 	
@@ -49,7 +80,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface{
 	    Runnable r = new Runnable() {
 	        public void run() {
 	    		Trajectory trajectory = id.getPlane().getTrajectory();
-	    		self.controller.respondTrajectory(id, trajectory);
+	    		self.getController().respondTrajectory(id, trajectory);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -60,7 +91,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface{
 	    Runnable r = new Runnable() {
 	        public void run() {
 	    		FlightStatus status = id.getPlane().getStatus();
-	    		self.controller.respondStatus(id, status);
+	    		self.getController().respondStatus(id, status);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -72,7 +103,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface{
 	    Runnable r = new Runnable() {
 	        public void run() {
 	    		double speed= id.getPlane().getSpeed();
-	    		self.controller.respondSpeed(id, speed);
+	    		self.getController().respondSpeed(id, speed);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -85,7 +116,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface{
 	        public void run() {
 	    		Airport sourceAirport = id.getPlane().getInitialSourceAirport();
 	    		Airport destinationAirport = id.getPlane().getInitialDestinationAirport();
-	    		self.controller.respondInitialSourceDestination(id, sourceAirport, destinationAirport);
+	    		self.getController().respondInitialSourceDestination(id, sourceAirport, destinationAirport);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -96,7 +127,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface{
 	    Runnable r = new Runnable() {
 	        public void run() {
 	        	AirportID airportId = id.getPlane().getInitialDestinationAirport().id;
-	    		self.controller.respondDestinationAirport(id, airportId);
+	    		self.getController().respondDestinationAirport(id, airportId);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -138,9 +169,17 @@ public class Simulator extends Thread implements SimulatorCommandInterface{
         		self.planes.add(plane);
         		plane.setTrajectory(traj);
         		plane.setStatus(FlightStatus.STATUS_WAITING_TAKEOFF);
-        		self.controller.requestTakeoff(plane.getID());
+        		self.getController().requestTakeoff(plane.getID());
 	        }
 	    };
 		this.transmissions.add(r);
+	}
+	
+	public Controller getController() {
+		return controller;
+	}
+	
+	public void setController(Controller controller) {
+		this.controller = controller;
 	}
 }

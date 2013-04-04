@@ -1,8 +1,7 @@
-import java.awt.List;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 
@@ -12,21 +11,12 @@ public class GlobalData {
 	}
     
     /** List of all airports */ 
-    private java.util.List<Airport> airports;
 	private Wheather wheather;
-    public LinkedList airportsCharacteristics
-    public Collection getWaitingPlanes (id AirportID) {
-	int i = 0;
-	while(AirportsCharacteristics.get(i).id != id){
-		    i++ ;
 	public Simulator simulator;
-	public GlobalData(){
-		
-	}
+	
 	
 	/** List of all airports */ 
 	//private java.util.List<Airport> airports;
-	private Wheather wheather;
 	
 //	public ConcurrentLinkedQueue<Carrier> controllerRequestQueue;
 	public ConcurrentSkipListSet<Airport> airports;
@@ -50,38 +40,55 @@ public class GlobalData {
 		throw new IllegalArgumentException("unknown airport id");
 	}
 
-	Collection<FlightID> getWaitingPlanes (AirportID id) {
-		int i = 0;
-		while(AirportCharacteristics.get(i).id != id){
-			i++ 
-			}
-		return AirportCharacteristics.get(i).getWaitingsPlanes()
-		}
+//	Collection<FlightID> getWaitingPlanes (AirportID id) {
+//		int i = 0;
+//		while(AirportCharacteristics.get(i).id != id){
+//			i++ 
+//			}
+//		return AirportCharacteristics.get(i).getWaitingsPlanes()
+//		}
+//
+//	AirportStatus getStatus(AirportId id){	
+//		int i = 0;
+//		while(AirportCharacteristics.get(i).id != id){
+//			i++ 
+//			}
+//		return AirportCharacteristics.get(i).getStatus()
+//
+//		}
+//		return AirportsCharacteristics.get(i).getWaitingsPlanes();
+//		i = 0;
+//    }
+//    AirportStatus getStatus(id AirportId){	
+//	 int i = 0;
+//	while(AirportsCharacteristics.get(i).id != id){
+//	    i++ ;
+//	}
+//	i = 0;
+//	return AirportsCharacteristics.get(i).getStatus();
+//    }
 
-	AirportStatus getStatus(AirportId id){	
-		int i = 0;
-		while(AirportCharacteristics.get(i).id != id){
-			i++ 
-			}
-		return AirportCharacteristics.get(i).getStatus()
+//	Collection<FlightID> getWaitingPlanes (AirportID id) {
+//		int i = 0;
+//		while(AirportCharacteristics.get(i).id != id){
+//			i++ 
+//			}
+//		return AirportCharacteristics.get(i).getWaitingsPlanes()
+//		}
+//
+//	AirportStatus getStatus(AirportId id){	
+//		int i = 0;
+//		while(AirportCharacteristics.get(i).id != id){
+//			i++ 
+//			}
+//		return AirportCharacteristics.get(i).getStatus()
+//		}
 
-		}
-		return AirportsCharacteristics.get(i).getWaitingsPlanes();
-		i = 0;
-    }
-    AirportStatus getStatus(id AirportId){	
-	 int i = 0;
-	while(AirportsCharacteristics.get(i).id != id){
-	    i++ ;
-	}
-	i = 0;
-	return AirportsCharacteristics.get(i).getStatus();
-    }
 }
 
 	
 	
-}
+
 //
 //abstract class Carrier {
 //	protected Simulator simulator;

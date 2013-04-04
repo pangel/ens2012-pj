@@ -1,14 +1,31 @@
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Controller implements ControllerCommandInterface{
-	private ConcurrentLinkedQueue<Runnable> transmissions;
+	private LinkedBlockingQueue<Runnable> transmissions;
 	private ControllerDataInterface globalData;
 	private Simulator simulator;
 	
-	Controller() {
-		this.transmissions = new ConcurrentLinkedQueue<Runnable>();
+	Controller(ControllerDataInterface globalData) {
+		this.globalData = globalData;
+		this.transmissions = new LinkedBlockingQueue<Runnable>();
 	}
+	
+	public void control() {
+		Runnable task;
+		while (true) {
+			try {
+				task = this.transmissions.take();
+				task.run();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+	
 	@Override
 	public void respondTrajectory(final FlightID id, final Trajectory t) {
 		final Controller self = this;
@@ -77,7 +94,7 @@ public class Controller implements ControllerCommandInterface{
 	        	Airport source = self.globalData.getAirportByID(s);
 	        	Airport dest = self.globalData.getAirportByID(d);
 	        	Trajectory trajectory = new SegmentTrajectory(source.position, dest.position);
-	        	self.simulator.respondNewFlight(planeID,s,d,trajectory);
+	        	self.getSimulator().respondNewFlight(planeID,s,d,trajectory);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -91,7 +108,7 @@ public class Controller implements ControllerCommandInterface{
 	        	long now = new Date().getTime();
 	        	long delay = (long)(Math.random() * 10000);
 	        	Date landingDate = new Date((now+delay));
-	        	self.simulator.respondLanding(id, landingDate);
+	        	self.getSimulator().respondLanding(id, landingDate);
 	        }
 	    };
 		this.transmissions.add(r);
@@ -102,9 +119,15 @@ public class Controller implements ControllerCommandInterface{
 		final Controller self = this;
 	    Runnable r = new Runnable() {
 	        public void run() {
-	        	self.simulator.respondTakeoff(id);
+	        	self.getSimulator().respondTakeoff(id);
 	        }
 	    };
 		this.transmissions.add(r);
+	}
+	public Simulator getSimulator() {
+		return simulator;
+	}
+	public void setSimulator(Simulator simulator) {
+		this.simulator = simulator;
 	}
 }
