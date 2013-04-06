@@ -8,6 +8,10 @@ import java.util.Date;
 import java.util.List;
 
 
+/**
+ *
+ * @author hp
+ */
 public class SegmentTrajectory implements Trajectory {
 	ArrayList<Point3D> data;
 	Date startDate;
@@ -48,7 +52,7 @@ public class SegmentTrajectory implements Trajectory {
 	     {trajectory.remove(0);}
 		Point3D x = Point3D.div ((Point3D.moins (trajectory.get(1), trajectory.get(0))), (Point3D.distance (trajectory.get(1), trajectory.get(0))));
 		Point3D y = Point3D.fois(x, (speed*(dt - (distance1/(speed)))));
-//		System.out.println(y.x);
+
 	    trajectory.set(0, (Point3D.plus (trajectory.get(0),y)));
 				  
     }
@@ -81,6 +85,11 @@ public class SegmentTrajectory implements Trajectory {
     		
     }
 
+    /**
+     *
+     * @param plane
+     * @param date
+     */
     public static void update(Plane plane, Date date) {}
 //    SegmentTrajectory(Point3D start, Point3D dest) {
 //		this.data = new ArrayList<Point3D>();

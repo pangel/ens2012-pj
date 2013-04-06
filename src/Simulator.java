@@ -1,13 +1,8 @@
 
 import java.util.*;
-
-
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.SwingUtilities;
 
 
 
@@ -23,8 +18,6 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private Controller controller;
     private Airport airportA;
     private Airport airportB;
-    private Hashtable<String, Airport> airportsHash;
-    private Hashtable<String, Plane> planesHash;
 
     /**
      *
@@ -38,7 +31,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         GlobalData globalData = new GlobalData();
         final NewJFrame gui = new NewJFrame();
         Simulator simulator = new Simulator(globalData, gui);
-        Controller controller = new Controller((ControllerDataInterface) globalData, gui);
+        GUIController controller = new GUIController((ControllerDataInterface) globalData, gui);
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -78,13 +71,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.makeAirport("The Wall", 380, 90, 0, 2);
         this.makeAirport("Pyke Castle", 130, 580, 0, 2);
         
-        this.gui.updateAirports(this.globalData.airports);
+        this.gui.setAirports(this.globalData.airports);
+        this.gui.setPlanes(this.planes);
     }
 
     private Airport makeAirport(String name, double x, double y, double z, int runways) {
         Airport airport = new Airport(new AirportCharacteristics(name, new Point3D(x, y, z), runways));
         this.globalData.airports.add(airport);
-        this.airportsHash.put(name, airport);
         return airport;
     }
 
@@ -98,9 +91,6 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.globalData = globalData;
         this.planes = Collections.synchronizedSet(new HashSet());
         this.transmissions = new LinkedBlockingQueue<Runnable>();
-        this.airportsHash = new Hashtable<String, Airport>();
-        this.planesHash = new Hashtable<String, Plane>();
-
     }
 
     /**
@@ -121,14 +111,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         plane.setLastUpdate(now);
 //                        System.out.println(plane.getPosition());
                         if (plane.getTrajectory().terminated()) {
-                            System.out.println("terminated!!!");
                             plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
                             this.controller.requestLanding(plane.getID());
                         }
                     }
                 }
             }
-            this.gui.drawPlanes(planes);
+            this.gui.repaintMap();
             Runnable task;
             task = this.transmissions.poll();
             if (task != null) {
@@ -137,7 +126,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             try {
                 Thread.sleep(30);
                 
-                if (Math.random() < 0.10*30/500) { 
+                if (Math.random() < 0.10*90/500) { 
                     Pair<Airport, Airport> trip = this.getRandomTrip();
                     
                     this.controller.requestNewFlight(trip.fst.id, trip.snd.id);
@@ -201,11 +190,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestTrajectory(final FlightID id) {
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 Trajectory trajectory = id.getPlane().getTrajectory();
-                self.getController().respondTrajectory(id, trajectory);
+                self.controller.respondTrajectory(id, trajectory);
             }
+            
+            public TaskType type() { return TaskType.REQUEST_TRAJECTORY; }
         };
         this.transmissions.add(r);
     }
@@ -216,11 +207,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestStatus(final FlightID id) {
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 FlightStatus status = id.getPlane().getStatus();
-                self.getController().respondStatus(id, status);
+                self.controller.respondStatus(id, status);
             }
+            public TaskType type() { return TaskType.DEFAULT; }
         };
         this.transmissions.add(r);
     }
@@ -231,11 +223,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestSpeed(final FlightID id) {
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 double speed = id.getPlane().getSpeed();
-                self.getController().respondSpeed(id, speed);
+                self.controller.respondSpeed(id, speed);
             }
+            public TaskType type() { return TaskType.DEFAULT; }
         };
         this.transmissions.add(r);
     }
@@ -246,12 +239,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestInitialSourceDestination(final FlightID id) {
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 Airport sourceAirport = id.getPlane().getInitialSourceAirport();
                 Airport destinationAirport = id.getPlane().getInitialDestinationAirport();
-                self.getController().respondInitialSourceDestination(id, sourceAirport, destinationAirport);
+                self.controller.respondInitialSourceDestination(id, sourceAirport, destinationAirport);
             }
+            public TaskType type() { return TaskType.DEFAULT; }
         };
         this.transmissions.add(r);
     }
@@ -262,11 +256,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestDestinationAirport(final FlightID id) {
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 AirportID airportId = id.getPlane().getInitialDestinationAirport().id;
-                self.getController().respondDestinationAirport(id, airportId);
+                self.controller.respondDestinationAirport(id, airportId);
             }
+            public TaskType type() { return TaskType.DEFAULT; }
         };
         this.transmissions.add(r);
     }
@@ -279,12 +274,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     @Override
     public void respondTakeoff(final FlightID id) {
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 Plane plane = id.getPlane();
                 plane.setStatus(FlightStatus.STATUS_INFLIGHT);
                 plane.setLastUpdate(new Date());
             }
+            public TaskType type() { return TaskType.RESPONSE_TAKEOFF; }
         };
         this.transmissions.add(r);
     }
@@ -299,7 +295,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         final Simulator self = this;
         final Airport destination = id.getPlane().getInitialDestinationAirport();
         final long diff = date.getTime() - (new Date()).getTime();
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 Plane plane = id.getPlane();
                 plane.setLandingDate(date);
@@ -309,6 +305,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             public String toString() {
                 return "" + destination.name + "sera détruit dans" + (diff/1000) + " secondes !";
             }
+            public TaskType type() { return TaskType.RESPONSE_LANDING; }
         };
         this.transmissions.add(r);
     }
@@ -324,15 +321,16 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     public void respondNewFlight(final FlightID id, final AirportID s, final AirportID d, final Trajectory traj) {
 //        System.out.println("respondNewFlight sync" + id + " " + s + " " + d);
         final Simulator self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
 //                System.out.println("respondNewFlight async" + id + " " + s + " " + d);
                 Plane plane = new Plane(id, self.globalData.getAirportByID(s), self.globalData.getAirportByID(d));
                 self.planes.add(plane);
                 plane.setTrajectory(traj);
                 plane.setStatus(FlightStatus.STATUS_WAITING_TAKEOFF);
-                self.getController().requestTakeoff(plane.getID());
+                self.controller.requestTakeoff(plane.getID());
             }
+            public TaskType type() { return TaskType.RESPONSE_NEWFLIGHT; }
         };
         this.transmissions.add(r);
     }

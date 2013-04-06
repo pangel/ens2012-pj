@@ -1,6 +1,8 @@
 
+import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -9,33 +11,29 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class Controller implements ControllerCommandInterface {
 
-    private LinkedBlockingQueue<Runnable> transmissions;
     private ControllerDataInterface globalData;
     private Simulator simulator;
-    private NewJFrame gui;
 
-    Controller(ControllerDataInterface globalData, NewJFrame gui) {
+    protected Set<TaskType> autoAccepts;
+    protected LinkedBlockingQueue<Task> transmissions;
+
+    Controller(ControllerDataInterface globalData) {
         this.globalData = globalData;
-        this.gui = gui;
-        this.transmissions = new LinkedBlockingQueue<Runnable>();
+        this.transmissions = new LinkedBlockingQueue<Task>();
+        this.autoAccepts = Collections.synchronizedSet(EnumSet.allOf(TaskType.class));
     }
 
     /**
      *
      */
     public void control() {
-        Runnable task;
-        boolean automatic = true;
         while (true) {
             try {
-                task = this.transmissions.take();
-                if (automatic) {
+                Task task = this.transmissions.take();
+                if (this.autoAccepts.contains(task.type())) {
                     task.run();
-                } else {
-                    this.gui.addRequest(task);
                 }
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -49,9 +47,13 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void respondTrajectory(final FlightID id, final Trajectory t) {
         final Controller self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 // ???
+            }
+
+            public TaskType type() {
+                return TaskType.DEFAULT;
             }
         };
         this.transmissions.add(r);
@@ -65,9 +67,13 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void respondStatus(final FlightID id, final FlightStatus s) {
         final Controller self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 // ???
+            }
+
+            public TaskType type() {
+                return TaskType.DEFAULT;
             }
         };
         this.transmissions.add(r);
@@ -84,9 +90,13 @@ public class Controller implements ControllerCommandInterface {
     public void respondInitialSourceDestination(final FlightID id, final Airport source,
             final Airport dest) {
         final Controller self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 // ???
+            }
+
+            public TaskType type() {
+                return TaskType.DEFAULT;
             }
         };
         this.transmissions.add(r);
@@ -99,9 +109,13 @@ public class Controller implements ControllerCommandInterface {
      */
     public void respondDestinationAirport(FlightID id, AirportID airportId) {
         final Controller self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 // ???
+            }
+
+            public TaskType type() {
+                return TaskType.DEFAULT;
             }
         };
         this.transmissions.add(r);
@@ -116,9 +130,13 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void respondSpeed(FlightID id, double speed) {
         final Controller self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 // ???
+            }
+
+            public TaskType type() {
+                return TaskType.DEFAULT;
             }
         };
         this.transmissions.add(r);
@@ -137,7 +155,7 @@ public class Controller implements ControllerCommandInterface {
         final Airport source = self.globalData.getAirportByID(s);
         final Airport dest = self.globalData.getAirportByID(d);
 
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
 //                System.out.println("requestNewFlight async" + s + " " + d);
                 FlightID planeID = new FlightID();
@@ -146,9 +164,14 @@ public class Controller implements ControllerCommandInterface {
             }
 
             public String toString() {
-                return "Eclosion de dragon à " + source.name + " destiné à détruire " + dest.name;
+                return "Éclore dragon à " + source.name + " pour détruire " + dest.name + " ?";
+            }
+
+            public TaskType type() {
+                return TaskType.REQUEST_NEWFLIGHT;
             }
         };
+            
         this.transmissions.add(r);
     }
 
@@ -160,16 +183,20 @@ public class Controller implements ControllerCommandInterface {
     public void requestLanding(final FlightID id) {
         final Controller self = this;
         final Airport destination = id.getPlane().getInitialDestinationAirport();
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 long now = new Date().getTime();
                 long delay = (long) (Math.random() * 10000);
                 Date landingDate = new Date((now + delay));
                 self.getSimulator().respondLanding(id, landingDate);
             }
-        
+
             public String toString() {
                 return "Détruire " + destination.name + " ?";
+            }
+
+            public TaskType type() {
+                return TaskType.REQUEST_LANDING;
             }
         };
         this.transmissions.add(r);
@@ -182,12 +209,18 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void requestTakeoff(final FlightID id) {
         final Controller self = this;
-        Runnable r = new Runnable() {
+        Task r = new Task() {
             public void run() {
                 self.getSimulator().respondTakeoff(id);
             }
-            
-            public String toString() { return "Un dragon veut s'envoler !"; }
+
+            public String toString() {
+                return "Un dragon veut s'envoler !";
+            }
+
+            public TaskType type() {
+                return TaskType.REQUEST_TAKEOFF;
+            }
         };
         this.transmissions.add(r);
     }
@@ -206,5 +239,9 @@ public class Controller implements ControllerCommandInterface {
      */
     public void setSimulator(Simulator simulator) {
         this.simulator = simulator;
+    }
+    
+    public void autoAccept(TaskType taskType) {
+        this.autoAccepts.add(taskType);
     }
 }

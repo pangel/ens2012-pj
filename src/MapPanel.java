@@ -15,6 +15,10 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+/**
+ *
+ * @author hp
+ */
 public class MapPanel extends JPanel {
 
     private ArrayList<Airport> airports;
@@ -50,11 +54,17 @@ public class MapPanel extends JPanel {
         }
     }
 
-    public void drawPlanes(Collection<Plane> planes) {
+    
+    public void setPlanes(Collection<Plane> planes) {
         this.planes = planes;
-        this.repaint();
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param color
+     */
     public void drawDot(double x, double y, Color color) {
         Color lastColor = g2d.getColor();
         Ellipse2D.Double circle = new Ellipse2D.Double(x, y, 10, 10);
@@ -63,6 +73,10 @@ public class MapPanel extends JPanel {
         g2d.setColor(lastColor);
     }
 
+    /**
+     *
+     * @param airports
+     */
     public void setAirports(ArrayList<Airport> airports) {
         this.airports = airports;
     }
