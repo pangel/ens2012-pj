@@ -4,4 +4,5 @@ bin/
 bin
 .class
 *.class
-/Preprojet Java/nbproject/private/
+/Preprojet Java/nbproject/private/dist
+dist/
