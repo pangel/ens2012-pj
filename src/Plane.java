@@ -56,4 +56,12 @@ public class Plane {
 	private Date takeoffDate;
 	private Date landingDate;
 	private FlightID id;
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+    
+    private Date lastUpdate;
 }

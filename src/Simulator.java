@@ -33,7 +33,6 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                System.out.println("what");
                 gui.setVisible(true);
             }
         });
@@ -96,26 +95,35 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     private void simulate() {
         while (true) {
-
-//				System.out.println("go\n");
-
-            for (Plane plane : this.planes) {
-                if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT) {
-                    SegmentTrajectory.update(plane, new Date());
-                    if (plane.getTrajectory().terminated()) {
-                        plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
-                        this.controller.requestLanding(plane.getID());
+            synchronized (this.planes) {
+                Iterator<Plane> it = this.planes.iterator();
+                while (it.hasNext()) {
+                    Plane plane = it.next();
+                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT) {
+//                        SegmentTrajectory.update(plane, new Date());
+                        Date now = new Date();
+                        Date last = plane.getLastUpdate();
+                        plane.getTrajectory().update(now, last, plane.getSpeed());
+                        plane.setLastUpdate(now);
+//                        System.out.println(plane.getPosition());
+                        if (plane.getTrajectory().terminated()) {
+                            System.out.println("terminated!!!");
+                            plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
+                            this.controller.requestLanding(plane.getID());
+                        }
                     }
                 }
             }
+            this.gui.drawPlanes(planes);
             Runnable task;
             task = this.transmissions.poll();
             if (task != null) {
                 task.run();
             }
             try {
-                Thread.sleep(500);
-                if (Math.random() < 0.25) { 
+                Thread.sleep(30);
+                
+                if (Math.random() < 0.10*30/500) { 
                     Pair<Airport, Airport> trip = this.getRandomTrip();
                     
                     this.controller.requestNewFlight(trip.fst.id, trip.snd.id);
@@ -228,11 +236,17 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             public void run() {
                 Plane plane = id.getPlane();
                 plane.setStatus(FlightStatus.STATUS_INFLIGHT);
+                plane.setLastUpdate(new Date());
             }
         };
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     * @param date
+     */
     @Override
     public void respondLanding(final FlightID id, final Date date) {
         final Simulator self = this;
@@ -242,6 +256,8 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             public void run() {
                 Plane plane = id.getPlane();
                 plane.setLandingDate(date);
+                destination.addWaitingPlane(id);
+                self.planes.remove(plane);
             }
             public String toString() {
                 return "" + destination.name + "sera détruit dans" + (diff/1000) + " secondes !";
@@ -250,13 +266,20 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     * @param s
+     * @param d
+     * @param traj
+     */
     @Override
     public void respondNewFlight(final FlightID id, final AirportID s, final AirportID d, final Trajectory traj) {
-        System.out.println("respondNewFlight sync" + id + " " + s + " " + d);
+//        System.out.println("respondNewFlight sync" + id + " " + s + " " + d);
         final Simulator self = this;
         Runnable r = new Runnable() {
             public void run() {
-                System.out.println("respondNewFlight async" + id + " " + s + " " + d);
+//                System.out.println("respondNewFlight async" + id + " " + s + " " + d);
                 Plane plane = new Plane(id, self.globalData.getAirportByID(s), self.globalData.getAirportByID(d));
                 self.planes.add(plane);
                 plane.setTrajectory(traj);

@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ public class MapPanel extends JPanel {
 
     private ArrayList<Airport> airports;
     private Graphics2D g2d;
+    private Collection<Plane> planes;
     // fields, constructors, methods etc..
 
     @Override
@@ -34,20 +37,22 @@ public class MapPanel extends JPanel {
             for (Airport airport : this.airports) {
                 this.drawDot(airport.position.x, airport.position.y, Color.red);
             }
-            for (int i = 1; i < 800; i++) {
-                for (int j = 1; j < 800; j++) {
-
-                this.drawDot(i*100, j*100, Color.blue);
-            }}
-    
-//                g.drawOval(airport.position.x, airport.position.y, 10, 10);
-//            Ellipse2D.Double circle = new Ellipse2D.Double(airport.position.x, airport.position.y, 10, 10);
-//                g2d.fill(circle);
-//                Color color = g.getColor g.getColor()
         }
 
+        if (this.planes != null) {
+            synchronized (this.planes) {
+                Iterator<Plane> it = this.planes.iterator();
+                while (it.hasNext()) {
+                    Plane plane = it.next();
+                    this.drawDot(plane.getPosition().x, plane.getPosition().y, Color.blue);
+                }
+            }
+        }
+    }
 
-
+    public void drawPlanes(Collection<Plane> planes) {
+        this.planes = planes;
+        this.repaint();
     }
 
     public void drawDot(double x, double y, Color color) {

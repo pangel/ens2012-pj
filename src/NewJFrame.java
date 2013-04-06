@@ -75,6 +75,9 @@ public class NewJFrame extends javax.swing.JFrame {
     public void addRequest(Runnable req) {
         this.requestsModel.addElement(req);
     }
+    public void drawPlanes(Collection<Plane> planes) {
+        this.mapPanel1.drawPlanes(planes);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -243,6 +246,7 @@ public class NewJFrame extends javax.swing.JFrame {
         List<Runnable> tasks = this.jList1.getSelectedValuesList();
         for (Runnable task: tasks) {
             task.run();
+            this.requestsModel.removeElement(task);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

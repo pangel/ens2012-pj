@@ -20,6 +20,9 @@ public class Point3D {
     	
     }
     
+    public String toString() {
+        return "("+this.x+","+this.y+","+this.z+")";
+    }
     public static Point3D moins(Point3D a, Point3D b) {
 	Point3D c = new Point3D((a.x - b.x), (a.y - b.y), (a.z - b.z));
 	c.x = a.x - b.x;
