@@ -5,10 +5,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.media.Manager;
-import javax.media.MediaLocator;
-import javax.media.NoPlayerException;
-import javax.media.Player;
+//import javax.media.Manager;
+//import javax.media.MediaLocator;
+//import javax.media.NoPlayerException;
+//import javax.media.Player;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+//import javax.sound.sampled.LineUnavailableException;
 import javax.swing.DefaultListModel;
 
 /*
@@ -166,6 +169,11 @@ public class NewJFrame extends javax.swing.JFrame {
         });
 
         jButton2.setText("Mourir");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jPanel2.setLayout(null);
 
@@ -251,16 +259,30 @@ public class NewJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_destructionsAutoacceptBoxActionPerformed
 
     private void DragonsButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DragonsButton2ActionPerformed
-        Player player;
+//        Player player;
+//        try {
+//            player = Manager.createPlayer(new MediaLocator(new File("dragons.wav").toURI().toURL()));
+//            player.start();
+//        } catch (Exception ex) {
+//            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+        Clip clip;
         try {
-            player = Manager.createPlayer(new MediaLocator(new File("dragons.wav").toURI().toURL()));
-            player.start();
-        } catch (IOException ex) {
-            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoPlayerException ex) {
+            clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(new File("dragons.wav")));
+            clip.start();
+        } catch (Exception ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_DragonsButton2ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        List<Runnable> tasks = this.jList1.getSelectedValuesList();
+        for (Runnable task : tasks) {
+            this.requestsModel.removeElement(task);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
