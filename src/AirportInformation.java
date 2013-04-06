@@ -1,8 +1,17 @@
 import java.util.*;
+/**
+ *
+ * @author hp
+ */
 public class AirportInformation extends AirportCharacteristics {
-	public AirportInformation(AirportCharacteristics ac)
+	/**
+     *
+     * @param ac
+     */
+    public AirportInformation(AirportCharacteristics ac)
 	{
 		super(ac);
+                this.waitingPlanes = new ArrayList<FlightID>();
 	}
 	AirportStatus getStatus(){
 		return status;
@@ -10,6 +19,12 @@ public class AirportInformation extends AirportCharacteristics {
 	Collection<FlightID> getWaitingPlanes(){
 		return waitingPlanes;
 	}
-	protected AirportStatus status;
-	protected Collection<FlightID> waitingPlanes;
+	/**
+     *
+     */
+    protected AirportStatus status;
+	/**
+     *
+     */
+    protected Collection<FlightID> waitingPlanes;
 }

@@ -6,11 +6,45 @@
  */
 
 public interface ControllerCommandInterface {
-	public void respondTrajectory(FlightID id, Trajectory t);
-	public void respondStatus(FlightID id, FlightStatus s);
-	public void respondInitialSourceDestination(FlightID id, Airport source, Airport dest);
-	public void respondSpeed(FlightID id, double speed);
-	public void requestNewFlight(AirportID source, AirportID dest);
-	public void requestLanding(FlightID id);
-	public void requestTakeoff(FlightID id);
+	/**
+     *
+     * @param id
+     * @param t
+     */
+    public void respondTrajectory(FlightID id, Trajectory t);
+	/**
+     *
+     * @param id
+     * @param s
+     */
+    public void respondStatus(FlightID id, FlightStatus s);
+	/**
+     *
+     * @param id
+     * @param source
+     * @param dest
+     */
+    public void respondInitialSourceDestination(FlightID id, Airport source, Airport dest);
+	/**
+     *
+     * @param id
+     * @param speed
+     */
+    public void respondSpeed(FlightID id, double speed);
+	/**
+     *
+     * @param source
+     * @param dest
+     */
+    public void requestNewFlight(AirportID source, AirportID dest);
+	/**
+     *
+     * @param id
+     */
+    public void requestLanding(FlightID id);
+	/**
+     *
+     * @param id
+     */
+    public void requestTakeoff(FlightID id);
 }

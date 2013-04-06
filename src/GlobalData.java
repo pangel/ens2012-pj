@@ -5,14 +5,24 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 
+/**
+ *
+ * @author hp
+ */
 public class GlobalData implements ControllerDataInterface {
+    /**
+     *
+     */
     public GlobalData(){
 	    this.airports = new ArrayList<Airport>();
 	}
     
     /** List of all airports */ 
 	private Wheather wheather;
-	public Simulator simulator;
+	/**
+     *
+     */
+    public Simulator simulator;
 	
 	
 	/** List of all airports */ 
@@ -21,7 +31,11 @@ public class GlobalData implements ControllerDataInterface {
 //	public ConcurrentLinkedQueue<Carrier> controllerRequestQueue;
 	public ArrayList<Airport> airports;
 	
-	public Collection<AirportCharacteristics>AirportCharacteristics() {
+	/**
+     *
+     * @return
+     */
+    public Collection<AirportCharacteristics>AirportCharacteristics() {
 		ArrayList<AirportCharacteristics> characteristics = new ArrayList<AirportCharacteristics>();
 		Iterator<Airport> it = this.airports.iterator();
 		while (it.hasNext()) {
@@ -30,14 +44,24 @@ public class GlobalData implements ControllerDataInterface {
 		return characteristics;
 	}
 	
-	public Airport getAirportByID(AirportID id) {
+	/**
+     *
+     * @param id
+     * @return
+     */
+    public Airport getAirportByID(AirportID id) {
 		for (Airport airport : this.airports) {
 			if (airport.id == id) { return airport; }
 		}
 		throw new IllegalArgumentException("unknown airport id");
 	}
 
-	public Collection<FlightID> getWaitingPlanes (AirportID id) {
+	/**
+     *
+     * @param id
+     * @return
+     */
+    public Collection<FlightID> getWaitingPlanes (AirportID id) {
 		return null;
 //		int i = 0;
 //		while(AirportCharacteristics.get(i).id != id){
@@ -46,7 +70,12 @@ public class GlobalData implements ControllerDataInterface {
 //		return AirportCharacteristics.get(i).getWaitingsPlanes()
 		}
 //
-	public AirportStatus getStatus(AirportID id){
+	/**
+     *
+     * @param id
+     * @return
+     */
+    public AirportStatus getStatus(AirportID id){
 		return null;	
 //		int i = 0;
 //		while(AirportCharacteristics.get(i).id != id){

@@ -111,7 +111,8 @@ public class SWTResourceManager {
 	 * 
 	 * @param stream
 	 *            the {@link InputStream} encoding the image data
-	 * @return the {@link Image} encoded by the specified input stream
+         * @return the {@link Image} encoded by the specified input stream
+         * @throws IOException  
 	 */
 	protected static Image getImage(InputStream stream) throws IOException {
 		try {

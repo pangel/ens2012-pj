@@ -8,6 +8,12 @@
  */
 public class Point3D {
 	double x, y, z;
+    /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     public static double distance(Point3D a, Point3D b) {
     	double i =2;
     	return (Math.sqrt((Math.pow((a.x -b.x), i)) + (Math.pow((a.y -b.y), i)) + (Math.pow((a.z -b.z), i))));
@@ -23,6 +29,13 @@ public class Point3D {
     public String toString() {
         return "("+this.x+","+this.y+","+this.z+")";
     }
+    
+    /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     public static Point3D moins(Point3D a, Point3D b) {
 	Point3D c = new Point3D((a.x - b.x), (a.y - b.y), (a.z - b.z));
 	c.x = a.x - b.x;
@@ -30,6 +43,12 @@ public class Point3D {
 	c.z = a.z - b.z;
 	return c;
 	    }	
+    /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     public static Point3D plus(Point3D a, Point3D b) {
 	Point3D c = new Point3D(a.x,a.x,a.x);
 	c.x = a.x + b.x;
@@ -37,6 +56,12 @@ public class Point3D {
 	c.z = a.z + b.z;
 	return c; 
     	}
+    /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     public static Point3D div (Point3D a, double b)
     {Point3D c = new Point3D(a.x,a.x,a.x);
     c.x = a.x/b;
@@ -45,6 +70,12 @@ public class Point3D {
     return c;
     }
 
+    /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     public static Point3D fois (Point3D a, double b)
     {Point3D c = new Point3D(a.x,a.x,a.x);
     c.x = a.x*b;

@@ -11,6 +11,10 @@ import javax.swing.SwingUtilities;
 
 
 
+/**
+ *
+ * @author hp
+ */
 public class Simulator extends Thread implements SimulatorCommandInterface {
 
     private GlobalData globalData;
@@ -22,6 +26,11 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private Hashtable<String, Airport> airportsHash;
     private Hashtable<String, Plane> planesHash;
 
+    /**
+     *
+     * @param args
+     * @throws InterruptedException
+     */
     public static void main(String args[]) throws InterruptedException {
 
 
@@ -79,6 +88,11 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         return airport;
     }
 
+    /**
+     *
+     * @param globalData
+     * @param gui
+     */
     public Simulator(GlobalData globalData, NewJFrame gui) {
         this.gui = gui;
         this.globalData = globalData;
@@ -136,6 +150,11 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public Plane getPlaneByID(FlightID id) {
         Iterator<Plane> it = this.planes.iterator();
         Plane plane;
@@ -148,6 +167,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         throw new IllegalArgumentException("unknown flight id");
     }
     
+    /**
+     *
+     * @return
+     */
     public Pair<Airport, Airport> getRandomTrip() {
         Random random = new Random();
         int max = this.globalData.airports.size();
@@ -172,6 +195,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      * an early request, Controller will call these functions, then wait
      * for the answer.
      */
+    /**
+     *
+     * @param id
+     */
     public void requestTrajectory(final FlightID id) {
         final Simulator self = this;
         Runnable r = new Runnable() {
@@ -183,6 +210,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     */
     public void requestStatus(final FlightID id) {
         final Simulator self = this;
         Runnable r = new Runnable() {
@@ -194,6 +225,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     */
     public void requestSpeed(final FlightID id) {
         final Simulator self = this;
         Runnable r = new Runnable() {
@@ -205,6 +240,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     */
     public void requestInitialSourceDestination(final FlightID id) {
         final Simulator self = this;
         Runnable r = new Runnable() {
@@ -217,6 +256,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     */
     public void requestDestinationAirport(final FlightID id) {
         final Simulator self = this;
         Runnable r = new Runnable() {
@@ -229,6 +272,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     }
 
     /* Private attributes */
+    /**
+     *
+     * @param id
+     */
     @Override
     public void respondTakeoff(final FlightID id) {
         final Simulator self = this;
@@ -290,10 +337,18 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @return
+     */
     public Controller getController() {
         return controller;
     }
 
+    /**
+     *
+     * @param controller
+     */
     public void setController(Controller controller) {
         this.controller = controller;
     }

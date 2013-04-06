@@ -3,6 +3,10 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ *
+ * @author hp
+ */
 public class Controller implements ControllerCommandInterface {
 
     private LinkedBlockingQueue<Runnable> transmissions;
@@ -16,22 +20,32 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions = new LinkedBlockingQueue<Runnable>();
     }
 
+    /**
+     *
+     */
     public void control() {
         Runnable task;
+        boolean automatic = true;
         while (true) {
             try {
                 task = this.transmissions.take();
-
-                this.gui.addRequest(task);
-//                task.run();
+                if (automatic) {
+                    task.run();
+                } else {
+                    this.gui.addRequest(task);
+                }
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-//            Thread.wait(500);
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param t
+     */
     @Override
     public void respondTrajectory(final FlightID id, final Trajectory t) {
         final Controller self = this;
@@ -43,6 +57,11 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     * @param s
+     */
     @Override
     public void respondStatus(final FlightID id, final FlightStatus s) {
         final Controller self = this;
@@ -55,6 +74,12 @@ public class Controller implements ControllerCommandInterface {
 
     }
 
+    /**
+     *
+     * @param id
+     * @param source
+     * @param dest
+     */
     @Override
     public void respondInitialSourceDestination(final FlightID id, final Airport source,
             final Airport dest) {
@@ -67,6 +92,11 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     * @param airportId
+     */
     public void respondDestinationAirport(FlightID id, AirportID airportId) {
         final Controller self = this;
         Runnable r = new Runnable() {
@@ -78,6 +108,11 @@ public class Controller implements ControllerCommandInterface {
 
     }
 
+    /**
+     *
+     * @param id
+     * @param speed
+     */
     @Override
     public void respondSpeed(FlightID id, double speed) {
         final Controller self = this;
@@ -90,16 +125,21 @@ public class Controller implements ControllerCommandInterface {
 
     }
 
+    /**
+     *
+     * @param s
+     * @param d
+     */
     @Override
     public void requestNewFlight(final AirportID s, final AirportID d) {
-        System.out.println("requestNewFlight sync" + s + " " + d);
+//        System.out.println("requestNewFlight sync" + s + " " + d);
         final Controller self = this;
         final Airport source = self.globalData.getAirportByID(s);
         final Airport dest = self.globalData.getAirportByID(d);
 
         Runnable r = new Runnable() {
             public void run() {
-                System.out.println("requestNewFlight async" + s + " " + d);
+//                System.out.println("requestNewFlight async" + s + " " + d);
                 FlightID planeID = new FlightID();
                 Trajectory trajectory = new SegmentTrajectory(source.position, dest.position);
                 self.getSimulator().respondNewFlight(planeID, s, d, trajectory);
@@ -112,6 +152,10 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     */
     @Override
     public void requestLanding(final FlightID id) {
         final Controller self = this;
@@ -131,6 +175,10 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @param id
+     */
     @Override
     public void requestTakeoff(final FlightID id) {
         final Controller self = this;
@@ -144,10 +192,18 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions.add(r);
     }
 
+    /**
+     *
+     * @return
+     */
     public Simulator getSimulator() {
         return simulator;
     }
 
+    /**
+     *
+     * @param simulator
+     */
     public void setSimulator(Simulator simulator) {
         this.simulator = simulator;
     }

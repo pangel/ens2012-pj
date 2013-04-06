@@ -48,6 +48,10 @@ public class NewJFrame extends javax.swing.JFrame {
         return this.airports;
     }
     
+    /**
+     *
+     * @param airports
+     */
     public void updateAirports(ArrayList<Airport> airports) {
 //        int n = airports.size();
 //        Enumeration<String> listAirports = airports.keys();
@@ -72,9 +76,18 @@ public class NewJFrame extends javax.swing.JFrame {
 //        g.drawString("This is my custom Panel!", 10, 20);
 //    }
     
+    /**
+     *
+     * @param req
+     */
     public void addRequest(Runnable req) {
         this.requestsModel.addElement(req);
     }
+    
+    /**
+     *
+     * @param planes
+     */
     public void drawPlanes(Collection<Plane> planes) {
         this.mapPanel1.drawPlanes(planes);
     }

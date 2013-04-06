@@ -7,12 +7,21 @@ import java.awt.*;
 
 
 
+/**
+ *
+ * @author hp
+ */
 public class InterfaceGUI extends JFrame {
 
 	Hashtable<String,Airport> tableAirports; 
 	Hashtable<String,Plane> tablePlanes;
 
-	public InterfaceGUI( Hashtable<String,Airport> tableAeroports, Hashtable<String,Plane> tableAvions) 
+	/**
+     *
+     * @param tableAeroports
+     * @param tableAvions
+     */
+    public InterfaceGUI( Hashtable<String,Airport> tableAeroports, Hashtable<String,Plane> tableAvions) 
 	{
 		tableAirports = tableAeroports;
 		tablePlanes = tableAvions;
@@ -37,7 +46,10 @@ public class InterfaceGUI extends JFrame {
 	JPanel panel = new JPanel();
 
 
-	public final void initUI() {
+	/**
+     *
+     */
+    public final void initUI() {
 
 		int i;
 		int n;

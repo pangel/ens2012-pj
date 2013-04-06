@@ -1,8 +1,31 @@
 import java.util.*;
 
+/**
+ *
+ * @author hp
+ */
 public interface ControllerDataInterface {
-	public Collection<AirportCharacteristics>AirportCharacteristics();
-	public AirportStatus getStatus(AirportID id);
-	public Collection<FlightID> getWaitingPlanes(AirportID id);
-	public Airport getAirportByID(AirportID id);
+	/**
+     *
+     * @return
+     */
+    public Collection<AirportCharacteristics>AirportCharacteristics();
+	/**
+     *
+     * @param id
+     * @return
+     */
+    public AirportStatus getStatus(AirportID id);
+	/**
+     *
+     * @param id
+     * @return
+     */
+    public Collection<FlightID> getWaitingPlanes(AirportID id);
+	/**
+     *
+     * @param id
+     * @return
+     */
+    public Airport getAirportByID(AirportID id);
 }

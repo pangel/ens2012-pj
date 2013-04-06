@@ -8,9 +8,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 
+/**
+ *
+ * @author hp
+ */
 public class MainWindow {
 
-	protected Shell shell;
+	/**
+     *
+     */
+    protected Shell shell;
 	/**
 	 * @wbp.nonvisual location=443,257
 	 */

@@ -1,16 +1,36 @@
 
+/**
+ *
+ * @author hp
+ */
 public class Airport extends AirportInformation {
-	public Airport(AirportCharacteristics ac){
+	/**
+     *
+     * @param ac
+     */
+    public Airport(AirportCharacteristics ac){
 		super(ac);
 	}
-	public void setStatus(AirportStatus s){
+	/**
+     *
+     * @param s
+     */
+    public void setStatus(AirportStatus s){
 		status = s;
 		
 	}
-	public void addWaitingPlane(FlightID id){
+	/**
+     *
+     * @param id
+     */
+    public void addWaitingPlane(FlightID id){
 		waitingPlanes.add(id);
 	}
-	public void removeWaitingPlane(FlightID id){
+	/**
+     *
+     * @param id
+     */
+    public void removeWaitingPlane(FlightID id){
 		waitingPlanes.remove(id);
 	}
         public String toString() {

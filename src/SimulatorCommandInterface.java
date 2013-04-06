@@ -6,12 +6,44 @@
  *
  */
 public interface SimulatorCommandInterface {
-	public void requestTrajectory(FlightID id);
-	public void requestSpeed(FlightID id);
-	public void requestStatus(FlightID id);
-	public void requestInitialSourceDestination(FlightID id);
+	/**
+     *
+     * @param id
+     */
+    public void requestTrajectory(FlightID id);
+	/**
+     *
+     * @param id
+     */
+    public void requestSpeed(FlightID id);
+	/**
+     *
+     * @param id
+     */
+    public void requestStatus(FlightID id);
+	/**
+     *
+     * @param id
+     */
+    public void requestInitialSourceDestination(FlightID id);
 	// FIXME: Modified: removed 2nd argument of type Trajectory. Add it back if it seems useful.
-	public void respondTakeoff(FlightID id);
-	public void respondLanding(FlightID id, java.util.Date date);
-	public void respondNewFlight(FlightID id, AirportID source, AirportID dest, Trajectory traj);
+	/**
+     *
+     * @param id
+     */
+    public void respondTakeoff(FlightID id);
+	/**
+     *
+     * @param id
+     * @param date
+     */
+    public void respondLanding(FlightID id, java.util.Date date);
+	/**
+     *
+     * @param id
+     * @param source
+     * @param dest
+     * @param traj
+     */
+    public void respondNewFlight(FlightID id, AirportID source, AirportID dest, Trajectory traj);
 }

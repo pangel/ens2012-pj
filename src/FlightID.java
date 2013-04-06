@@ -1,3 +1,7 @@
+/**
+ *
+ * @author hp
+ */
 public class FlightID {
 
 	private Plane plane;
@@ -5,11 +9,19 @@ public class FlightID {
 	FlightID() {
 	}
 	
-	public Plane getPlane() {
+	/**
+     *
+     * @return
+     */
+    public Plane getPlane() {
 		return plane;
 	}
 	
-	public void setPlane(Plane plane) {
+	/**
+     *
+     * @param plane
+     */
+    public void setPlane(Plane plane) {
 		if (this.plane != null) {
 			throw new IllegalArgumentException("Plane already set for Flight!"); 
 		} else {
