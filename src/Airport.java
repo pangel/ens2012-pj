@@ -13,4 +13,7 @@ public class Airport extends AirportInformation {
 	public void removeWaitingPlane(FlightID id){
 		waitingPlanes.remove(id);
 	}
+        public String toString() {
+            return this.name;
+        }
 }

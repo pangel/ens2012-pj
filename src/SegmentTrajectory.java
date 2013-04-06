@@ -38,6 +38,7 @@ public class SegmentTrajectory implements Trajectory {
     public boolean terminated() {
     	return this.data.size() == 1;
     }
+    public static void update(Plane plane, Date date) {}
 //    SegmentTrajectory(Point3D start, Point3D dest) {
 //		this.data = new ArrayList<Point3D>();
 //		this.data.add(start);
