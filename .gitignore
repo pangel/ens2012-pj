@@ -6,3 +6,5 @@ bin
 *.class
 /Preprojet Java/nbproject/private/dist
 dist/
+/nbproject/private/
+/build/
