@@ -134,7 +134,6 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="eclosionsAutoacceptBoxItemStateChanged"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="eclosionsAutoacceptBoxActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="decollagesAutoaccept">
@@ -143,7 +142,6 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="decollagesAutoacceptItemStateChanged"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="decollagesAutoacceptActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="destructionsAutoacceptBox">
@@ -152,7 +150,6 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="destructionsAutoacceptBoxItemStateChanged"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="destructionsAutoacceptBoxActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="DragonsButton2">

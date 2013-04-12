@@ -105,11 +105,6 @@ public class NewJFrame extends javax.swing.JFrame {
                 eclosionsAutoacceptBoxItemStateChanged(evt);
             }
         });
-        eclosionsAutoacceptBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eclosionsAutoacceptBoxActionPerformed(evt);
-            }
-        });
 
         decollagesAutoaccept.setText("Accepter tous les décollages");
         decollagesAutoaccept.addItemListener(new java.awt.event.ItemListener() {
@@ -117,21 +112,11 @@ public class NewJFrame extends javax.swing.JFrame {
                 decollagesAutoacceptItemStateChanged(evt);
             }
         });
-        decollagesAutoaccept.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                decollagesAutoacceptActionPerformed(evt);
-            }
-        });
 
         destructionsAutoacceptBox.setText("Accepter toutes les destructions !");
         destructionsAutoacceptBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 destructionsAutoacceptBoxItemStateChanged(evt);
-            }
-        });
-        destructionsAutoacceptBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                destructionsAutoacceptBoxActionPerformed(evt);
             }
         });
 
@@ -262,28 +247,8 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void eclosionsAutoacceptBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eclosionsAutoacceptBoxActionPerformed
-
-   
-    }//GEN-LAST:event_eclosionsAutoacceptBoxActionPerformed
-
-    private void decollagesAutoacceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decollagesAutoacceptActionPerformed
-
-    }//GEN-LAST:event_decollagesAutoacceptActionPerformed
-
-    private void destructionsAutoacceptBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_destructionsAutoacceptBoxActionPerformed
-
-    }//GEN-LAST:event_destructionsAutoacceptBoxActionPerformed
-
     private void DragonsButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DragonsButton2ActionPerformed
-//        Player player;
-//        try {
-//            player = Manager.createPlayer(new MediaLocator(new File("dragons.wav").toURI().toURL()));
-//            player.start();
-//        } catch (Exception ex) {
-//            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
+
         Clip clip;
         try {
             clip = AudioSystem.getClip();
