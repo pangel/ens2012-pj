@@ -89,7 +89,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     public Simulator(GlobalData globalData, NewJFrame gui) {
         this.gui = gui;
         this.globalData = globalData;
-        this.planes = Collections.synchronizedSet(new HashSet());
+        this.planes = Collections.synchronizedSet(new HashSet<Plane>());
         this.transmissions = new LinkedBlockingQueue<Runnable>();
     }
 
@@ -168,7 +168,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         while (sourceIndex == destIndex) { destIndex = random.nextInt(max); }
         Airport source = this.globalData.airports.get(sourceIndex);        
         Airport dest = this.globalData.airports.get(destIndex);
-        return new Pair(source, dest);
+        return new Pair<Airport, Airport>(source, dest);
     }
         
     /**

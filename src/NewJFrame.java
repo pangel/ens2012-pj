@@ -29,7 +29,7 @@ public class NewJFrame extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public NewJFrame() {
-        this.requestsModel = new DefaultListModel();
+        this.requestsModel = new DefaultListModel<Runnable>();
         initComponents();
     }
     
@@ -86,7 +86,7 @@ public class NewJFrame extends javax.swing.JFrame {
         DragonsButton2 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jList1 = new javax.swing.JList<Runnable>();
         jLabel5 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -318,7 +318,7 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
     }
-    DefaultListModel requestsModel;
+    DefaultListModel<Runnable> requestsModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton DragonsButton2;
     private javax.swing.JCheckBox decollagesAutoaccept;
@@ -327,7 +327,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JList jList1;
+    private javax.swing.JList<Runnable> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
