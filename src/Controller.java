@@ -182,24 +182,53 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void requestLanding(final FlightID id) {
         final Controller self = this;
-        final Airport destination = id.getPlane().getInitialDestinationAirport();
+        final Airport initialDestination = id.getPlane().getInitialDestinationAirport();
         Task r = new Task() {
             public void run() {
-                long now = new Date().getTime();
-                long delay = (long) (Math.random() * 10000);
-                Date landingDate = new Date((now + delay));
-                self.getSimulator().respondLanding(id, landingDate);
+                Airport destination = null;
+
+                if (!initialDestination.isOpen() || !initialDestination.acceptWaiting()) {
+                     destination = self.nearbyAvailableAirport(initialDestination);
+                }
+                if (destination == null) {
+                    destination = initialDestination;
+                }
+                Trajectory newTrajectory = null;
+                if (destination != initialDestination) {
+                    newTrajectory = new SegmentTrajectory(id.getPlane().getInitialDestinationAirport().position, destination.position);
+                    self.getSimulator().requestChangeCourse(id, destination, newTrajectory);
+                } else {
+                    long now = new Date().getTime();
+                    long delay = (long) (Math.random() * 10000);
+                    Date landingDate = new Date((now + delay));
+                    self.getSimulator().respondLanding(id, landingDate);
+                }
             }
 
             public String toString() {
-                return "Détruire " + destination.name + " ?";
+                return "Détruire " + initialDestination.name + " ?";
             }
 
             public TaskType type() {
                 return TaskType.REQUEST_LANDING;
             }
+
         };
         this.transmissions.add(r);
+    }
+    
+
+    private Airport nearbyAvailableAirport(Airport source) {
+        
+        for (AirportCharacteristics charac : this.globalData.AirportCharacteristics()) {
+            Airport airport = this.globalData.getAirportByID(charac.id);
+            double distance = Point3D.distance(source.position, airport.position);
+            System.out.println("Distance: " + distance);
+            if (source != airport && distance < 100) {
+                return airport;
+            }
+        }
+        return null;
     }
 
     /**

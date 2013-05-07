@@ -11,7 +11,7 @@ public class AirportInformation extends AirportCharacteristics {
     public AirportInformation(AirportCharacteristics ac)
 	{
 		super(ac);
-                this.waitingPlanes = new ArrayList<FlightID>();
+                this.waitingPlanes = new ArrayList<>();
 	}
 	AirportStatus getStatus(){
 		return status;

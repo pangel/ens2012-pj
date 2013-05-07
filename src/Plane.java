@@ -150,4 +150,8 @@ public class Plane {
     private Date landingDate;
     private Date lastUpdate;
     private FlightID id;
+
+    void setDestination(Airport destination) {
+        this.dest = destination;
+    }
 }

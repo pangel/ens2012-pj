@@ -16,7 +16,7 @@ public class GUIController extends Controller {
 
         this.gui = gui;
         gui.setController(this);
-        this.autoAccepts.clear();
+//        this.autoAccepts.clear();
     }
 
     @Override

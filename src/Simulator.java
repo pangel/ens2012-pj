@@ -118,11 +118,21 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 }
             }
             this.gui.repaintMap();
+            
             Runnable task;
             task = this.transmissions.poll();
             if (task != null) {
                 task.run();
             }
+            
+            for (Airport airport : this.globalData.airports) {
+                System.out.println("Airport " + airport + " : " + airport.acceptLanding() + ","+airport.acceptWaiting());
+                while (!airport.waitingPlanes.isEmpty() && airport.acceptLanding()) {
+                    System.out.println("Landing a plane at " + airport);
+                    airport.landNextPlane();
+                }
+            }
+            
             try {
                 Thread.sleep(30);
                 
@@ -290,7 +300,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      * @param id
      * @param date
      */
-    @Override
+   
     public void respondLanding(final FlightID id, final Date date) {
         final Simulator self = this;
         final Airport destination = id.getPlane().getInitialDestinationAirport();
@@ -306,6 +316,27 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 return "" + destination.name + "sera détruit dans" + (diff/1000) + " secondes !";
             }
             public TaskType type() { return TaskType.RESPONSE_LANDING; }
+        };
+        this.transmissions.add(r);
+    }
+    
+    public void requestChangeCourse(final FlightID id, final Airport newDestination, final Trajectory newTrajectory) {
+        final Simulator self = this;
+        Task r = new Task() {
+            public void run() {
+                Plane plane = id.getPlane();
+                plane.setStatus(FlightStatus.STATUS_INFLIGHT);
+                
+                System.out.println("Oh hey, you should be changing course!!! " + id);
+                System.out.println("The current trajectory is :" + plane.getTrajectory());
+                plane.setDestination(newDestination);
+                plane.setTrajectory(newTrajectory);
+            }
+            
+            public String toString() {
+                return "Nouvelle destination : " + newDestination.name + ".";
+            }
+            public TaskType type() { return TaskType.REQUEST_CHANGE_COURSE; }
         };
         this.transmissions.add(r);
     }

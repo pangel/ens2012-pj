@@ -35,7 +35,7 @@ public class GlobalData implements ControllerDataInterface {
      *
      * @return
      */
-    public Collection<AirportCharacteristics>AirportCharacteristics() {
+    public Collection<AirportCharacteristics> AirportCharacteristics() {
 		ArrayList<AirportCharacteristics> characteristics = new ArrayList<AirportCharacteristics>();
 		Iterator<Airport> it = this.airports.iterator();
 		while (it.hasNext()) {
