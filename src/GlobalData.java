@@ -13,6 +13,18 @@ public class GlobalData implements ControllerDataInterface {
     /**
      *
      */
+//    public static final double mapWidth = 300;
+    public static final double earthRadius = 50;
+    
+    public static double mapWidth() {
+//        return 2 * Math.PI * earthRadius;
+        return 758;
+    }
+   
+    public static double earthRadius() {
+        return earthRadius;
+    }
+ 
     public GlobalData(){
 	    this.airports = new ArrayList<Airport>();
 	}

@@ -222,7 +222,7 @@ public class Controller implements ControllerCommandInterface {
         
         for (AirportCharacteristics charac : this.globalData.AirportCharacteristics()) {
             Airport airport = this.globalData.getAirportByID(charac.id);
-            double distance = Point3D.distance(source.position, airport.position);
+            double distance = source.position.distance(airport.position);
             System.out.println("Distance: " + distance);
             if (source != airport && distance < 100) {
                 return airport;
