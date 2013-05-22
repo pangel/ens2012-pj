@@ -1,3 +1,4 @@
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,23 +100,23 @@ public class NewJFrame extends javax.swing.JFrame {
         setResizable(false);
 
         eclosionsAutoacceptBox.setText("Accepter toutes les éclosions");
-        eclosionsAutoacceptBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eclosionsAutoacceptBoxActionPerformed(evt);
+        eclosionsAutoacceptBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                eclosionsAutoacceptBoxItemStateChanged(evt);
             }
         });
 
         decollagesAutoaccept.setText("Accepter tous les décollages");
-        decollagesAutoaccept.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                decollagesAutoacceptActionPerformed(evt);
+        decollagesAutoaccept.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                decollagesAutoacceptItemStateChanged(evt);
             }
         });
 
         destructionsAutoacceptBox.setText("Accepter toutes les destructions !");
-        destructionsAutoacceptBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                destructionsAutoacceptBoxActionPerformed(evt);
+        destructionsAutoacceptBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                destructionsAutoacceptBoxItemStateChanged(evt);
             }
         });
 
@@ -246,27 +247,8 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void eclosionsAutoacceptBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eclosionsAutoacceptBoxActionPerformed
-        this.controller.autoAccept(TaskType.REQUEST_NEWFLIGHT);
-    }//GEN-LAST:event_eclosionsAutoacceptBoxActionPerformed
-
-    private void decollagesAutoacceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decollagesAutoacceptActionPerformed
-        this.controller.autoAccept(TaskType.REQUEST_TAKEOFF);
-    }//GEN-LAST:event_decollagesAutoacceptActionPerformed
-
-    private void destructionsAutoacceptBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_destructionsAutoacceptBoxActionPerformed
-        this.controller.autoAccept(TaskType.REQUEST_LANDING);
-    }//GEN-LAST:event_destructionsAutoacceptBoxActionPerformed
-
     private void DragonsButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DragonsButton2ActionPerformed
-//        Player player;
-//        try {
-//            player = Manager.createPlayer(new MediaLocator(new File("dragons.wav").toURI().toURL()));
-//            player.start();
-//        } catch (Exception ex) {
-//            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
+
         Clip clip;
         try {
             clip = AudioSystem.getClip();
@@ -283,6 +265,30 @@ public class NewJFrame extends javax.swing.JFrame {
             this.requestsModel.removeElement(task);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void eclosionsAutoacceptBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_eclosionsAutoacceptBoxItemStateChanged
+        if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            this.controller.UnAutoAccept(TaskType.REQUEST_NEWFLIGHT);
+        } else if (evt.getStateChange() == ItemEvent.SELECTED) {
+            this.controller.autoAccept(TaskType.REQUEST_NEWFLIGHT);
+        }
+    }//GEN-LAST:event_eclosionsAutoacceptBoxItemStateChanged
+
+    private void decollagesAutoacceptItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_decollagesAutoacceptItemStateChanged
+     if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            this.controller.UnAutoAccept(TaskType.REQUEST_TAKEOFF);
+        } else if (evt.getStateChange() == ItemEvent.SELECTED) {
+            this.controller.autoAccept(TaskType.REQUEST_TAKEOFF);
+        }
+    }//GEN-LAST:event_decollagesAutoacceptItemStateChanged
+
+    private void destructionsAutoacceptBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_destructionsAutoacceptBoxItemStateChanged
+     if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            this.controller.UnAutoAccept(TaskType.REQUEST_LANDING);
+        } else if (evt.getStateChange() == ItemEvent.SELECTED) {
+            this.controller.autoAccept(TaskType.REQUEST_LANDING);
+        }
+    }//GEN-LAST:event_destructionsAutoacceptBoxItemStateChanged
 
     /**
      * @param args the command line arguments

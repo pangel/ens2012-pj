@@ -273,4 +273,10 @@ public class Controller implements ControllerCommandInterface {
     public void autoAccept(TaskType taskType) {
         this.autoAccepts.add(taskType);
     }
+    
+    
+
+    void UnAutoAccept(TaskType taskType) {
+        this.autoAccepts.remove(taskType);
+    }
 }
