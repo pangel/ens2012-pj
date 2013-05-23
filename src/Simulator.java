@@ -61,21 +61,24 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
 
 
         this.controller.setSimulator(this);
-
-        this.makeAirport("Winterfell", 300, 280, 0, 2);
-        this.makeAirport("Dothraki Sea", 700, 600, 10, 2);
-        this.makeAirport("Quarth", 900, 900, 0, 2);
-        this.makeAirport("King's landing", 385, 530, 0, 2);
-        this.makeAirport("Lannisport", 120, 700, 0, 2);
+//
+        this.makeAirport("Winterfell", GlobalData.toKm(300), GlobalData.toKm(280), 0, 2);
+        this.makeAirport("Dothraki Sea", GlobalData.toKm(700), GlobalData.toKm(600), 10, 2);
+        this.makeAirport("Quarth", GlobalData.toKm(900), GlobalData.toKm(900), 0, 2);
+        this.makeAirport("King's landing", GlobalData.toKm(385), GlobalData.toKm(530), 0, 2);
+        this.makeAirport("Lannisport", GlobalData.toKm(120), GlobalData.toKm(700), 0, 2);
 //        this.makeAirport("Volantis", 20, 20, 0, 2);
-        this.makeAirport("The Wall", 380, 90, 0, 2);
-        this.makeAirport("Pyke Castle", 130, 580, 0, 2);
+        this.makeAirport("The Wall", GlobalData.toKm(380), GlobalData.toKm(90), 0, 2);
+        this.makeAirport("Pyke Castle", GlobalData.toKm(130), GlobalData.toKm(580), 0, 2);
+//        
+//        this.makeAirport("East", 10,300,0,2);
+//        this.makeAirport("West", 700,300,0,2);
         
         this.gui.setAirports(this.globalData.airports);
         this.gui.setPlanes(this.planes);
     }
 
-    private Airport makeAirport(String name, double x, double y, double z, int runways) {
+    public Airport makeAirport(String name, double x, double y, double z, int runways) {
         Airport airport = new Airport(new AirportCharacteristics(name, new Point3D(x, y, z), runways));
         this.globalData.airports.add(airport);
         return airport;
@@ -126,7 +129,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             }
             
             for (Airport airport : this.globalData.airports) {
-                System.out.println("Airport " + airport + " : " + airport.acceptLanding() + ","+airport.acceptWaiting());
+                //System.out.println("Airport " + airport + " : " + airport.acceptLanding() + ","+airport.acceptWaiting());
                 while (!airport.waitingPlanes.isEmpty() && airport.acceptLanding()) {
                     System.out.println("Landing a plane at " + airport);
                     airport.landNextPlane();

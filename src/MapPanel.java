@@ -67,7 +67,7 @@ public class MapPanel extends JPanel {
      */
     public void drawDot(double x, double y, Color color) {
         Color lastColor = g2d.getColor();
-        Ellipse2D.Double circle = new Ellipse2D.Double(x, y, 10, 10);
+        Ellipse2D.Double circle = new Ellipse2D.Double(GlobalData.toPixel(x), GlobalData.toPixel(y), 10, 10);
         g2d.setColor(color);
         g2d.fill(circle);
         g2d.setColor(lastColor);
