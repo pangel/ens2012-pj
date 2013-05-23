@@ -14,7 +14,7 @@ public class Point3D {
      * @param b
      * @return
      */
-    public static double distance(Point3D a, Point3D b) {
+    public static double euclideanDistance(Point3D a, Point3D b) {
     	double i =2;
     	return (Math.sqrt((Math.pow((a.x -b.x), i)) + (Math.pow((a.y -b.y), i)) + (Math.pow((a.z -b.z), i))));
 	    }
@@ -84,5 +84,34 @@ public class Point3D {
     c.y = a.y*b;
     c.z = a.z*b;
     return c;
+    }
+    
+        
+    void normalize() {
+        if (this.x < 0) { this.x = this.x + GlobalData.mapWidth(); }
+        if (this.x > GlobalData.mapWidth()) { this.x = this.x - GlobalData.mapWidth(); }
+    }    
+    
+    Point3D convertFor(Point3D other) {
+        Point3D alt0 = new Point3D(this.x,this.y,this.z);
+        Point3D alt1 = new Point3D(this.x+GlobalData.mapWidth(),this.y,this.z);
+        Point3D alt2 = new Point3D(this.x-GlobalData.mapWidth(),this.y,this.z);
+        
+        double d0 = Point3D.euclideanDistance(alt0,other);
+        double d1 = Point3D.euclideanDistance(alt1, other);
+        double d2 = Point3D.euclideanDistance(alt2, other);
+        
+        if (d0 <= d1 && d0 <= d2) {
+            return alt0;
+        } else if (d1 <= d0 && d1 <= d2) {
+            return alt1;
+        } else {
+            return alt2;
+        }
+    }
+    
+    public double distance(Point3D other) {
+        Point3D converted = other.convertFor(this);
+        return Point3D.euclideanDistance(this,converted);
     }
 }

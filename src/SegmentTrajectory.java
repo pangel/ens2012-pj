@@ -50,16 +50,22 @@ public class SegmentTrajectory implements Trajectory {
 		double distance1 = 0;
 		while (distance1 < dt*speed) {
 		i++;
-		distance1 = distance1 + (Point3D.distance(trajectory.get(i) ,trajectory.get(i-1)));
+		distance1 = distance1 + (trajectory.get(i).distance(trajectory.get(i-1)));
 	}
-	distance1  = distance1 - (Point3D.distance(trajectory.get(i) ,trajectory.get(i-1)));
+	distance1  = distance1 - (trajectory.get(i).distance(trajectory.get(i-1)));
 	
 	for (int j = 2; j <= i; j++)
 	     {trajectory.remove(0);}
-		Point3D x = Point3D.div ((Point3D.moins (trajectory.get(1), trajectory.get(0))), (Point3D.distance (trajectory.get(1), trajectory.get(0))));
-		Point3D y = Point3D.fois(x, (speed*(dt - (distance1/(speed)))));
+            Point3D a = trajectory.get(0);
+            Point3D b = trajectory.get(1).convertFor(a);
+            
+            Point3D x = Point3D.div ((Point3D.moins (b, a)), (b.distance(a)));
+            Point3D y = Point3D.fois(x, (speed*(dt - (distance1/(speed)))));
+            
+            Point3D newA = Point3D.plus(trajectory.get(0), y);
+            newA.normalize();
 
-	    trajectory.set(0, (Point3D.plus (trajectory.get(0),y)));
+	    trajectory.set(0, newA);
 				  
     }
 	 
