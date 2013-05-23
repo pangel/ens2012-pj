@@ -118,7 +118,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         }
                         if (plane.fuel < plane.initialFuel*0.1) {
                             plane.setStatus(FlightStatus.STATUS_EMERGENCY);
-                            Controller.requestEmergencyLanding(plane.getID(),plane.fuel);
+                            this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
                         }
                         if (plane.critical(this.planes, plane)) {
                           Plane p2 = plane.isCritical(this.planes, plane);
@@ -129,7 +129,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                               Point3D a = l.current ();
                               Point3D b = l.second ();
                               Point3D c = Point3D.moins(b,a);
-                              Point3D d = Point3D.div(c, Point3D.distance(a,b));
+                              Point3D d = Point3D.div(c, a.distance(b));
                               Point3D m = new Point3D(a.x+d.x*2 , a.y+d.y*2 , a.z-2);
                               Point3D n = new Point3D(m.x+d.x*5, m.y+d.y*5 , m.z);
                               Point3D o = new Point3D(n.x+d.x*2, n.y+d.y*2 , n.z+2);                              
@@ -142,19 +142,18 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                               Point3D a = l.current ();
                               Point3D b = l.second ();
                               Point3D c = Point3D.moins(b,a);
-                              Point3D d = Point3D.div(c, Point3D.distance(a,b));
+                              Point3D d = Point3D.div(c, a.distance(b));
                               Point3D m = new Point3D(a.x+d.x*2 , a.y+d.y*2 , a.z+2);
                               Point3D n = new Point3D(m.x+d.x*5, m.y+d.y*5 , m.z);
                               Point3D o = new Point3D(n.x+d.x*2, n.y+d.y*2 , n.z-2); 
-                              System.out.println(a.z+m.z);
+                              System.out.println(plane.getID());
+                              System.out.println(m.z);
+                              System.out.println(a.z);
                               l.insert3(m,n,o);
                                 
                             }
                         }
-           //             if (plane.carburant) {
-                        
-                        
-//                        System.out.println(plane.getPosition());
+         
                         if (plane.getTrajectory().terminated()) {
                             plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
                             this.controller.requestLanding(plane.getID());

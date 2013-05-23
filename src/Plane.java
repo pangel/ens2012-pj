@@ -15,8 +15,8 @@ public class Plane {
         this.source = source;
         this.dest = dest;
         this.speed = 0.1;
-        this.fuel = 1.5*Point3D.distance(source.position, dest.position);
-        this.initialFuel = 1.5*Point3D.distance(source.position, dest.position);
+        this.fuel = 1.5*(source.position.distance(dest.position));
+        this.initialFuel = 1.5*(source.position.distance(dest.position));
     }
 
     /**
@@ -130,13 +130,13 @@ public class Plane {
     public boolean isNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
         Point3D b = p2.getPosition ();
-        return (Point3D.distance(a,b) < 5);
+        return (a.distance(b) < 5);
     } 
     
     public boolean isTooNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
         Point3D b = p2.getPosition ();
-        return (Point3D.distance(a,b) < 1);
+        return (a.distance(b) < 1);
     }
     
     /**
