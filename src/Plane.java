@@ -14,9 +14,11 @@ public class Plane {
         this.id = id;
         this.source = source;
         this.dest = dest;
-        this.speed = 0.1;
+
+        this.speed = (double)1000 /* km/h */ / (1000*3600); /* km/ms */
         this.fuel = 1.5*(source.position.distance(dest.position));
         this.initialFuel = 1.5*(source.position.distance(dest.position));
+
     }
 
     /**

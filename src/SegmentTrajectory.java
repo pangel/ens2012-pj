@@ -42,7 +42,7 @@ public class SegmentTrajectory implements Trajectory {
 
     { 	ArrayList<Point3D> trajectory = data;
 //            System.out.println(data);    
-	double dt = date.getTime() - last_update.getTime();
+	double dt = GlobalData.duration(date.getTime(),last_update.getTime());
 	int i = 0;
 	Point3D dernier = null;
 
@@ -63,6 +63,7 @@ public class SegmentTrajectory implements Trajectory {
             Point3D y = Point3D.fois(x, (speed*(dt - (distance1/(speed)))));
             
             Point3D newA = Point3D.plus(trajectory.get(0), y);
+            
             newA.normalize();
 
 	    trajectory.set(0, newA);

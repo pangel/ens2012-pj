@@ -14,6 +14,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 //import javax.sound.sampled.LineUnavailableException;
 import javax.swing.DefaultListModel;
+import javax.swing.JSlider;
 
 /*
  * To change this template, choose Tools | Templates
@@ -85,6 +86,8 @@ public class NewJFrame extends javax.swing.JFrame {
         decollagesAutoaccept = new javax.swing.JCheckBox();
         destructionsAutoacceptBox = new javax.swing.JCheckBox();
         DragonsButton2 = new javax.swing.JButton();
+        jSlider1 = new javax.swing.JSlider(1,10000,1000);
+        jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<Runnable>();
@@ -127,6 +130,19 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        jSlider1.setMaximum(10000);
+        jSlider1.setMinorTickSpacing(1000);
+        jSlider1.setPaintTicks(true);
+        jSlider1.setSnapToTicks(true);
+        jSlider1.setToolTipText("Accélérer le temps (utilise : magie)");
+        jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider1StateChanged(evt);
+            }
+        });
+
+        jLabel1.setText("WHAT IS THIS SORCERY??");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -137,10 +153,14 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(decollagesAutoaccept, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(eclosionsAutoacceptBox, javax.swing.GroupLayout.Alignment.LEADING))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(108, 108, 108)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
                 .addComponent(DragonsButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(33, 33, 33))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -151,9 +171,14 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addComponent(decollagesAutoaccept)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(destructionsAutoacceptBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(DragonsButton2)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSlider1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(DragonsButton2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addContainerGap())))
         );
 
         jList1.setModel(this.requestsModel);
@@ -178,15 +203,17 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jPanel2.setLayout(null);
 
+        mapPanel1.setPreferredSize(new java.awt.Dimension(625, 625));
+
         javax.swing.GroupLayout mapPanel1Layout = new javax.swing.GroupLayout(mapPanel1);
         mapPanel1.setLayout(mapPanel1Layout);
         mapPanel1Layout.setHorizontalGroup(
             mapPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 758, Short.MAX_VALUE)
+            .addGap(0, 625, Short.MAX_VALUE)
         );
         mapPanel1Layout.setVerticalGroup(
             mapPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 726, Short.MAX_VALUE)
+            .addGap(0, 625, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -290,6 +317,13 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_destructionsAutoacceptBoxItemStateChanged
 
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
+        JSlider source = (JSlider) evt.getSource();
+        if (!source.getValueIsAdjusting()) {
+            GlobalData.speedup = (double) source.getValue();
+        }
+    }//GEN-LAST:event_jSlider1StateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -332,12 +366,14 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox eclosionsAutoacceptBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JList<Runnable> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSlider jSlider1;
     private MapPanel mapPanel1;
     // End of variables declaration//GEN-END:variables
 }
