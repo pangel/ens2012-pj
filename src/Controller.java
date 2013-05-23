@@ -1,5 +1,6 @@
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
@@ -217,13 +218,23 @@ public class Controller implements ControllerCommandInterface {
         this.transmissions.add(r);
     }
     
-
-    private Airport nearbyAvailableAirport(Airport source) {
-        
+    private Airport nearestAirport(final Point3D position) {
+        Airport closest = null;
+        for (AirportCharacteristics charac : this.globalData.AirportCharacteristics()) {
+            Airport airport = this.globalData.getAirportByID(charac.id);
+            double distance = position.distance(airport.position);
+            if (closest == null || position.distance(closest.position) > position.distance(airport.position)) {
+                closest = airport;
+            }
+        }
+        return closest;
+    }
+    
+    private Airport nearbyAvailableAirport(Airport source) {    
         for (AirportCharacteristics charac : this.globalData.AirportCharacteristics()) {
             Airport airport = this.globalData.getAirportByID(charac.id);
             double distance = source.position.distance(airport.position);
-            System.out.println("Distance: " + distance);
+            //System.out.println("Distance: " + distance);
             if (source != airport && distance < 100) {
                 return airport;
             }
