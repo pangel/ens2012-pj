@@ -278,5 +278,11 @@ public class Controller implements ControllerCommandInterface {
 
     void UnAutoAccept(TaskType taskType) {
         this.autoAccepts.remove(taskType);
+    }    
+    public void requestEmergencyLanding(FlightID id, double fuel) {
+        Plane plane = id.getPlane ();
+        Point3D pos = plane.getPosition();
+        Airport newDest = nearestAirport(pos);
+        plane.setDestination(newDest);
     }
 }

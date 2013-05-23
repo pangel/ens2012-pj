@@ -47,4 +47,6 @@ public interface ControllerCommandInterface {
      * @param id
      */
     public void requestTakeoff(FlightID id);
+    
+    public void requestEmergencyLanding(FlightID id, double fuel);
 }

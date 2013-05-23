@@ -1,5 +1,7 @@
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  *
@@ -13,6 +15,8 @@ public class Plane {
         this.source = source;
         this.dest = dest;
         this.speed = 0.1;
+        this.fuel = 1.5*Point3D.distance(source.position, dest.position);
+        this.initialFuel = 1.5*Point3D.distance(source.position, dest.position);
     }
 
     /**
@@ -118,7 +122,23 @@ public class Plane {
     public void setTakeoffDate(Date d) {
         takeoffDate = d;
     }
-
+    
+    public void setFuel (double f) {
+        fuel = f;
+    }
+    
+    public boolean isNear (Plane p1, Plane p2) {
+        Point3D a = p1.getPosition ();
+        Point3D b = p2.getPosition ();
+        return (Point3D.distance(a,b) < 5);
+    } 
+    
+    public boolean isTooNear (Plane p1, Plane p2) {
+        Point3D a = p1.getPosition ();
+        Point3D b = p2.getPosition ();
+        return (Point3D.distance(a,b) < 1);
+    }
+    
     /**
      *
      * @param d
@@ -144,14 +164,47 @@ public class Plane {
     private Trajectory trajectory;
     private FlightStatus status;
     private String name;
-    private double speed;
+    public double speed;
     private Airport source, dest;
     private Date takeoffDate;
     private Date landingDate;
     private Date lastUpdate;
     private FlightID id;
-
+    public double fuel;
+    public double initialFuel;
+    
     void setDestination(Airport destination) {
         this.dest = destination;
     }
-}
+    public boolean critical (Collection<Plane> hash, Plane p) {
+        boolean acc = false;
+        Iterator<Plane> it = hash.iterator ();
+    while (it.hasNext ()) {
+            Plane a = it.next ();
+            acc = acc | isNear (p,a);
+    }
+    return acc;
+    }
+    public boolean collision (Collection<Plane> hash, Plane p) {
+        boolean acc = false;
+        Iterator<Plane> it = hash.iterator ();
+    while (it.hasNext ()) {
+            Plane a = it.next ();
+            acc = acc | isTooNear (p,a);
+    }
+    return acc;
+    }
+    
+   
+    public Plane isCritical (Collection<Plane> hash, Plane p) {
+        boolean acc = false;
+        Iterator<Plane> it = hash.iterator ();
+        Plane a = it.next ();
+    while (it.hasNext () && !isNear (p,a) ) {
+            a = it.next ();
+               }
+    return a;
+    //   Throw illegalUseOfisCritical;
+    } 
+}   
+

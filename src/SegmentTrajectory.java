@@ -16,7 +16,11 @@ public class SegmentTrajectory implements Trajectory {
 	ArrayList<Point3D> data;
 	Date startDate;
     
-   
+   public void insert3 (Point3D a, Point3D b, Point3D c) {
+       data.add(1,a);
+       data.add(2,b);
+       data.add(3,c);
+   }
 
     public boolean terminated() {
     	return this.data.size() == 1;
@@ -30,7 +34,9 @@ public class SegmentTrajectory implements Trajectory {
             return this.data.get(0);
         }
 }
-    
+    public Point3D second () {
+        return this.data.get(1);
+    }
 
     public void update ( Date date, Date last_update, double speed)
 

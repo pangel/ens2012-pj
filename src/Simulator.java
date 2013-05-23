@@ -63,12 +63,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.controller.setSimulator(this);
 
         this.makeAirport("Winterfell", 300, 280, 0, 2);
-        this.makeAirport("Dothraki Sea", 700, 600, 10, 2);
-        this.makeAirport("Quarth", 900, 900, 0, 2);
-        this.makeAirport("King's landing", 385, 530, 0, 2);
-        this.makeAirport("Lannisport", 120, 700, 0, 2);
+    //    this.makeAirport("Dothraki Sea", 700, 600, 10, 2);
+      //  this.makeAirport("Quarth", 900, 900, 0, 2);
+     //   this.makeAirport("King's landing", 385, 530, 0, 2);
+    //    this.makeAirport("Lannisport", 120, 700, 0, 2);
 //        this.makeAirport("Volantis", 20, 20, 0, 2);
-        this.makeAirport("The Wall", 380, 90, 0, 2);
+      //  this.makeAirport("The Wall", 380, 90, 0, 2);
         this.makeAirport("Pyke Castle", 130, 580, 0, 2);
         
         this.gui.setAirports(this.globalData.airports);
@@ -109,6 +109,51 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         Date last = plane.getLastUpdate();
                         plane.getTrajectory().update(now, last, plane.getSpeed());
                         plane.setLastUpdate(now);
+                        plane.setFuel(plane.fuel - (now.getTime() -last.getTime()*plane.speed));
+                        if (plane.fuel <= 0) {
+                          plane.setStatus(FlightStatus.STATUS_CRASHED);  
+                        }
+                        if (plane.collision(this.planes, plane)) {
+                            plane.setStatus(FlightStatus.STATUS_CRASHED);
+                        }
+                        if (plane.fuel < plane.initialFuel*0.1) {
+                            plane.setStatus(FlightStatus.STATUS_EMERGENCY);
+                            Controller.requestEmergencyLanding(plane.getID(),plane.fuel);
+                        }
+                        if (plane.critical(this.planes, plane)) {
+                          Plane p2 = plane.isCritical(this.planes, plane);
+                          Point3D pos1 = plane.getPosition ();
+                          Point3D pos2 = p2.getPosition ();
+                            if (pos1.z < pos2.z) {
+                           Trajectory l = plane.getTrajectory();
+                              Point3D a = l.current ();
+                              Point3D b = l.second ();
+                              Point3D c = Point3D.moins(b,a);
+                              Point3D d = Point3D.div(c, Point3D.distance(a,b));
+                              Point3D m = new Point3D(a.x+d.x*2 , a.y+d.y*2 , a.z-2);
+                              Point3D n = new Point3D(m.x+d.x*5, m.y+d.y*5 , m.z);
+                              Point3D o = new Point3D(n.x+d.x*2, n.y+d.y*2 , n.z+2);                              
+                              l.insert3(m,n,o);
+                            
+                              
+                            }
+                            if (pos1.z >= pos2.z){
+                              Trajectory l = plane.getTrajectory();
+                              Point3D a = l.current ();
+                              Point3D b = l.second ();
+                              Point3D c = Point3D.moins(b,a);
+                              Point3D d = Point3D.div(c, Point3D.distance(a,b));
+                              Point3D m = new Point3D(a.x+d.x*2 , a.y+d.y*2 , a.z+2);
+                              Point3D n = new Point3D(m.x+d.x*5, m.y+d.y*5 , m.z);
+                              Point3D o = new Point3D(n.x+d.x*2, n.y+d.y*2 , n.z-2); 
+                              System.out.println(a.z+m.z);
+                              l.insert3(m,n,o);
+                                
+                            }
+                        }
+           //             if (plane.carburant) {
+                        
+                        
 //                        System.out.println(plane.getPosition());
                         if (plane.getTrajectory().terminated()) {
                             plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
