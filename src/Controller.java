@@ -48,6 +48,7 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void respondTrajectory(final FlightID id, final Trajectory t) {
         final Controller self = this;
+        if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Task r = new Task() {
             public void run() {
                 // ???
@@ -68,6 +69,7 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void respondStatus(final FlightID id, final FlightStatus s) {
         final Controller self = this;
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Task r = new Task() {
             public void run() {
                 // ???
@@ -91,6 +93,7 @@ public class Controller implements ControllerCommandInterface {
     public void respondInitialSourceDestination(final FlightID id, final Airport source,
             final Airport dest) {
         final Controller self = this;
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Task r = new Task() {
             public void run() {
                 // ???
@@ -110,6 +113,7 @@ public class Controller implements ControllerCommandInterface {
      */
     public void respondDestinationAirport(FlightID id, AirportID airportId) {
         final Controller self = this;
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Task r = new Task() {
             public void run() {
                 // ???
@@ -131,6 +135,7 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void respondSpeed(FlightID id, double speed) {
         final Controller self = this;
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Task r = new Task() {
             public void run() {
                 // ???
@@ -183,6 +188,7 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void requestLanding(final FlightID id) {
         final Controller self = this;
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         final Airport initialDestination = id.getPlane().getInitialDestinationAirport();
         Task r = new Task() {
             public void run() {
@@ -249,6 +255,7 @@ public class Controller implements ControllerCommandInterface {
     @Override
     public void requestTakeoff(final FlightID id) {
         final Controller self = this;
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Task r = new Task() {
             public void run() {
                 self.getSimulator().respondTakeoff(id);
@@ -291,6 +298,7 @@ public class Controller implements ControllerCommandInterface {
         this.autoAccepts.remove(taskType);
     }    
     public void requestEmergencyLanding(FlightID id, double fuel) {
+         if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Plane plane = id.getPlane ();
         Point3D pos = plane.getPosition();
         Airport newDest = nearestAirport(pos);

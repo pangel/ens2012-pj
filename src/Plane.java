@@ -27,6 +27,12 @@ public class Plane {
      *
      * @return
      */
+    public void setSilence (Silence s) {
+        this.listSilence.add(s);
+    }
+    public void setError (TrajectoryError e) {
+        this.listError.add(e);
+    }
     public Trajectory getTrajectory() {
         return trajectory;
     }
