@@ -20,7 +20,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private Airport airportA;
     private Airport airportB;
     private double startTime = 0;
-    private boolean useScenario = true;
+    private boolean useScenario = false;
 
     /**
      *
@@ -489,7 +489,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     public void respondNewFlight(final FlightID id, final AirportID s, final AirportID d, final Trajectory traj) {
 //        System.out.println("respondNewFlight sync" + id + " " + s + " " + d);
         final Simulator self = this;
-        if ( id.getPlane().insilence(new Date ().getTime())) {return;}
+        
             
         
         Task r = new Task() {
