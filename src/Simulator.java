@@ -143,6 +143,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 while (it.hasNext()) {
                
                     Plane plane = it.next();
+
                     
                     if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT || 
                         plane.getStatus() == FlightStatus.STATUS_EMERGENCY) {  
@@ -162,8 +163,8 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         
                         plane.getTrajectory().update(dt, plane.getSpeed());
                                                
-                        if (Plane.inerror(new Date(), plane)) {
-                          TrajectoryError error = Plane.isinerror(new Date(), plane);
+                        if (Plane.inerror(new Date().getTime(), plane)) {
+                          TrajectoryError error = plane.isinerror((double)new Date().getTime());
                           Point3D e = new Point3D(error.getdx()*plane.getSpeed()*(last-now),error.getdy()*plane.getSpeed()*(last-now),plane.getTrajectory().current().z);
                           plane.getTrajectory().modify1 (e);                      
                         }
@@ -177,6 +178,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         
                        plane.setFuel(plane.fuel - dt);  
                         
+
                        if (plane.fuel <= 0) {
                           plane.setStatus(FlightStatus.STATUS_CRASHED);
                           System.out.println("crash_fuel" + plane.getID());
@@ -327,6 +329,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestTrajectory(final FlightID id) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 Trajectory trajectory = id.getPlane().getTrajectory();
@@ -344,6 +347,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestStatus(final FlightID id) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 FlightStatus status = id.getPlane().getStatus();
@@ -360,6 +364,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestSpeed(final FlightID id) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 double speed = id.getPlane().getSpeed();
@@ -376,6 +381,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestInitialSourceDestination(final FlightID id) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 Airport sourceAirport = id.getPlane().getInitialSourceAirport();
@@ -393,6 +399,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void requestDestinationAirport(final FlightID id) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 AirportID airportId = id.getPlane().getInitialDestinationAirport().id;
@@ -411,6 +418,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     @Override
     public void respondTakeoff(final FlightID id) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 Plane plane = id.getPlane();
@@ -433,6 +441,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         final Simulator self = this;
         final Airport destination = id.getPlane().getInitialDestinationAirport();
         final long diff = date.getTime() - (new Date()).getTime();
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 Plane plane = id.getPlane();
@@ -449,6 +458,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     
     public void requestChangeCourse(final FlightID id, final Airport newDestination, final Trajectory newTrajectory) {
         final Simulator self = this;
+        if (id.getPlane().insilence(new Date ().getTime())) { return;}
         Task r = new Task() {
             public void run() {
                 Plane plane = id.getPlane();
@@ -479,6 +489,9 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     public void respondNewFlight(final FlightID id, final AirportID s, final AirportID d, final Trajectory traj) {
 //        System.out.println("respondNewFlight sync" + id + " " + s + " " + d);
         final Simulator self = this;
+        if ( id.getPlane().insilence(new Date ().getTime())) {return;}
+            
+        
         Task r = new Task() {
             public void run() {
 //                System.out.println("respondNewFlight async" + id + " " + s + " " + d);
@@ -491,6 +504,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             public TaskType type() { return TaskType.RESPONSE_NEWFLIGHT; }
         };
         this.transmissions.add(r);
+    
     }
 
     /**

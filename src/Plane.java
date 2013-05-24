@@ -20,6 +20,7 @@ public class Plane {
         this.fuel = 1.5*(source.position.distance(dest.position))/this.speed;
         this.initialFuel = this.fuel;
         this.listError = new LinkedList();
+        this.listSilence = new LinkedList();
     }
 
     /**
@@ -186,9 +187,14 @@ public class Plane {
     public double fuel;
     public double initialFuel;
 
+
     private double speedRatio;
     
-    public Collection<TrajectoryError> listError; 
+    
+
+
+    public Collection<TrajectoryError> listError;
+    public Collection<Silence> listSilence;
 
     void setDestination(Airport destination) {
         this.dest = destination;
@@ -224,13 +230,13 @@ public class Plane {
     return a;
     //   Throw illegalUseOfisCritical;
     }
-    public static boolean inerror (Date d,Plane p) {
+    public static boolean inerror (double d,Plane p) {
         boolean acc = false;
         Iterator<TrajectoryError> it = p.listError.iterator ();
         if (p.listError.size() != 0) {
         TrajectoryError a = it.next();
         while (it.hasNext()) {
-             acc = acc || (d.getTime() > a.getStartTime().getTime() && d.getTime() < a.getEndTime().getTime());
+             acc = acc || (d > a.getStartTime() && d < a.getEndTime());
              a = it.next();
         }
         }
@@ -239,12 +245,12 @@ public class Plane {
         
     }
     
-    public static TrajectoryError isinerror (Date d,Plane p) {
-        Iterator<TrajectoryError> it = p.listError.iterator ();
+    public TrajectoryError isinerror (double d) {
+        Iterator<TrajectoryError> it = this.listError.iterator ();
         TrajectoryError a = null;
-        if (p.listError.size() != 0) {
+        if (this.listError.size() != 0) {
         a = it.next();
-        while (it.hasNext() && !(d.getTime() > a.getStartTime().getTime() && d.getTime() < a.getEndTime().getTime())) {
+        while (it.hasNext() && !(d > a.getStartTime() && d < a.getEndTime())) {
             a = it.next();
         }
         }
@@ -252,6 +258,25 @@ public class Plane {
         
         
     }
+    
+    public boolean insilence(double d) {
+        Iterator<Silence> it = this.listSilence.iterator();
+        boolean acc = false;
+        if ( this.listSilence.size() != 0)  {
+                Silence a = it.next();
+            while (it.hasNext()) {        
+                acc = acc || (a.begin < d && a.end > d);
+                a = it.next();
+            } 
+              
+    return acc;}
+        else {return acc;}
+        
+    }
+    
+    
+    
+    
 //    public void trajectoryError (Collection<TrajectoryError> l) {
 //        Iterator<TrajectoryError> it = l.iterator ();
 //        while (it.hasNext()) {

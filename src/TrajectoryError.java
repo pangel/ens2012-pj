@@ -11,15 +11,15 @@ import java.util.Date;
  * @author mbeunard
  */
 public class TrajectoryError {
-    private Date startTime;
-    private Date endTime;
+    private double startTime;
+    private double endTime;
     private double dx;
     private double dy;
     
-    public Date getStartTime () {
+    public double getStartTime () {
     return startTime;    
 }
-    public Date getEndTime () {
+    public double getEndTime () {
     return endTime;    
 }
     public double getdx () {
@@ -27,10 +27,10 @@ public class TrajectoryError {
 }   public double getdy () {
     return dy;    
 }
-    public void setStartTime (Date d) {
+    public void setStartTime (double d) {
         startTime = d;
     }
-     public void setEndTime (Date d) {
+     public void setEndTime (double d) {
         endTime = d;
     }
       public void setdx (double d) {
