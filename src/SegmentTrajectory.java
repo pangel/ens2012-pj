@@ -21,6 +21,11 @@ public class SegmentTrajectory implements Trajectory {
        data.add(2,b);
        data.add(3,c);
    }
+   public void modify1 (Point3D a) {
+       data.get(0).x =a.x;
+       data.get(0).y =a.y;
+       data.get(0).z =a.z;
+   }
 
     public boolean terminated() {
     	return this.data.size() == 1;

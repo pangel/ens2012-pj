@@ -18,12 +18,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private Controller controller;
     private Airport airportA;
     private Airport airportB;
-
+   
     /**
      *
      * @param args
      * @throws InterruptedException
      */
+    
     public static void main(String args[]) throws InterruptedException {
 
 
@@ -63,13 +64,13 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.controller.setSimulator(this);
 
 
-//
-  //      this.makeAirport("Winterfell", GlobalData.toKm(300), GlobalData.toKm(280), 0, 2);
-  //      this.makeAirport("Dothraki Sea", GlobalData.toKm(700), GlobalData.toKm(600), 10, 2);
-  //      this.makeAirport("Quarth", GlobalData.toKm(900), GlobalData.toKm(900), 0, 2);
-  //      this.makeAirport("King's landing", GlobalData.toKm(385), GlobalData.toKm(530), 0, 2);
-  //      this.makeAirport("Lannisport", GlobalData.toKm(120), GlobalData.toKm(700), 0, 2);
-//        this.makeAirport("Volantis", 20, 20, 0, 2);
+
+        this.makeAirport("Winterfell", GlobalData.toKm(300), GlobalData.toKm(280), 0, 2);
+        this.makeAirport("Dothraki Sea", GlobalData.toKm(700), GlobalData.toKm(600), 10, 2);
+        this.makeAirport("Quarth", GlobalData.toKm(900), GlobalData.toKm(900), 0, 2);
+        this.makeAirport("King's landing", GlobalData.toKm(385), GlobalData.toKm(530), 0, 2);
+        this.makeAirport("Lannisport", GlobalData.toKm(120), GlobalData.toKm(700), 0, 2);
+        this.makeAirport("Volantis", 20, 20, 0, 2);
         this.makeAirport("The Wall", GlobalData.toKm(380), GlobalData.toKm(90), 0, 2);
         this.makeAirport("Pyke Castle", GlobalData.toKm(130), GlobalData.toKm(580), 0, 2);
 //        
@@ -96,6 +97,8 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.globalData = globalData;
         this.planes = Collections.synchronizedSet(new HashSet<Plane>());
         this.transmissions = new LinkedBlockingQueue<Runnable>();
+      
+        
     }
 
     /**
@@ -114,22 +117,31 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         Date last = plane.getLastUpdate();
                         plane.getTrajectory().update(now, last, plane.getSpeed());
                         plane.setLastUpdate(now);
+                        if (Plane.inerror(now, plane)) {
+                          TrajectoryError error = Plane.isinerror(now, plane);
+                          Point3D e = new Point3D(error.getdx()*plane.getSpeed()*(last.getTime()-now.getTime()),error.getdy()*plane.getSpeed()*(last.getTime()-now.getTime()),plane.getTrajectory().current().z);
+                          plane.getTrajectory().modify1 (e);                      
+                        }
                        plane.setFuel(plane.fuel - GlobalData.duration(now.getTime(),last.getTime()));                      
                        if (plane.fuel <= 0) {
-                          plane.setStatus(FlightStatus.STATUS_CRASHED);                          
+                          plane.setStatus(FlightStatus.STATUS_CRASHED);
+                          System.out.println("crash_fuel" + plane.getID());
+                          Statistics.incrnb_crash_fuel ();
                        }
                        if (plane.collision(this.planes, plane)) {
                            plane.setStatus(FlightStatus.STATUS_CRASHED);
-                           System.out.println("crash");
-                          
+                           System.out.println("crash_collision" + plane.getID());
+                           Statistics.incrnb_crash_collision ();
                        }
                        if (plane.fuel < plane.initialFuel*0.1) {
-                           System.out.println("fuelpeu");
+                         //  System.out.println("fuelpeu");
                            plane.setStatus(FlightStatus.STATUS_EMERGENCY);
                            this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
                       }
                        if (plane.getSpeed() < 300/1000/3600) {
                            plane.setStatus(FlightStatus.STATUS_CRASHED);
+                           System.out.println("crash_speed" + plane.getID());
+                           Statistics.incrnb_crash_speed ();
                        }
                        if (plane.critical(this.planes, plane)) {                           
                           Plane p2 = plane.isCritical(this.planes, plane);
@@ -144,8 +156,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                               Point3D m = new Point3D(a.x , a.y , a.z-2);
                               Point3D n = new Point3D(m.x+15, m.y+15 , m.z);
                               Point3D o = new Point3D(n.x, n.y , n.z+2);                              
-                              l.insert3(m,n,o);
-                            
+                              l.insert3(m,n,o);                           
                               
                             }
                             if (pos1.z >= pos2.z){
@@ -165,6 +176,9 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                         if (plane.getTrajectory().terminated()) {
                             plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
                             this.controller.requestLanding(plane.getID());
+                            Date a = plane.getTakeoffDate();
+                            Statistics.addsum_time(GlobalData.duration(now.getTime(), a.getTime()));
+                            
                         }
                     }
                 }
@@ -182,6 +196,8 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 while (!airport.waitingPlanes.isEmpty() && airport.acceptLanding()) {
                     System.out.println("Landing a plane at " + airport);
                     airport.landNextPlane();
+                    Statistics.incrnb_landing ();
+                    
                 }
             }
             
@@ -341,6 +357,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 Plane plane = id.getPlane();
                 plane.setStatus(FlightStatus.STATUS_INFLIGHT);
                 plane.setLastUpdate(new Date());
+                plane.setTakeoffDate(new Date()); 
             }
             public TaskType type() { return TaskType.RESPONSE_TAKEOFF; }
         };

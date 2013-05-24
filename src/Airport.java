@@ -48,7 +48,8 @@ public class Airport extends AirportInformation {
         synchronized (waitingPlanes) {
             Iterator<FlightID> it = waitingPlanes.iterator();
             if (it.hasNext()) {
-                waitingPlanes.remove(it.next());
+                it.next();
+                it.remove();               
             }
         }
         for (int i = 0; i < this.runways.length; i++) {

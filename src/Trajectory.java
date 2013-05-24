@@ -26,4 +26,5 @@ public interface Trajectory {
     public boolean terminated();
     public Point3D second ();
     public void insert3 (Point3D a, Point3D b, Point3D c);
+    public void modify1 (Point3D a);
 }
