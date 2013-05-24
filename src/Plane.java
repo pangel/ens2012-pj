@@ -2,6 +2,7 @@
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  *
@@ -16,9 +17,9 @@ public class Plane {
         this.dest = dest;
         this.speedRatio = 1;
         this.speed = (double)1000 /* km/h */ / (1000*3600); /* km/ms */
-        this.fuel = 0.5*(source.position.distance(dest.position))/this.speed;
+        this.fuel = 1.5*(source.position.distance(dest.position))/this.speed;
         this.initialFuel = this.fuel;
-
+        this.listError = new LinkedList();
     }
 
     /**
@@ -184,8 +185,11 @@ public class Plane {
     private FlightID id;
     public double fuel;
     public double initialFuel;
+
     private double speedRatio;
     
+    public Collection<TrajectoryError> listError; 
+
     void setDestination(Airport destination) {
         this.dest = destination;
     }
@@ -219,6 +223,47 @@ public class Plane {
                }
     return a;
     //   Throw illegalUseOfisCritical;
-    } 
+    }
+    public static boolean inerror (Date d,Plane p) {
+        boolean acc = false;
+        Iterator<TrajectoryError> it = p.listError.iterator ();
+        if (p.listError.size() != 0) {
+        TrajectoryError a = it.next();
+        while (it.hasNext()) {
+             acc = acc || (d.getTime() > a.getStartTime().getTime() && d.getTime() < a.getEndTime().getTime());
+             a = it.next();
+        }
+        }
+        return acc;
+        
+        
+    }
+    
+    public static TrajectoryError isinerror (Date d,Plane p) {
+        Iterator<TrajectoryError> it = p.listError.iterator ();
+        TrajectoryError a = null;
+        if (p.listError.size() != 0) {
+        a = it.next();
+        while (it.hasNext() && !(d.getTime() > a.getStartTime().getTime() && d.getTime() < a.getEndTime().getTime())) {
+            a = it.next();
+        }
+        }
+        return a;
+        
+        
+    }
+//    public void trajectoryError (Collection<TrajectoryError> l) {
+//        Iterator<TrajectoryError> it = l.iterator ();
+//        while (it.hasNext()) {
+//            TrajectoryError error = it.next ();
+//            Date starttime = error.getStartTime();
+//            Date endtime = error.getEndTime();
+//            double dx = error.getdx();
+//            double dy = error.getdy();
+//            e = new Point3D(position.x+dx*(endtime.getTime() - starttime.getTime())*speed)
+//            trajectory.insert1(position.plus(e));
+//            
+//            }
+ //   }
 }   
 

@@ -59,6 +59,7 @@ public class Airport extends AirportInformation {
                     landed.add(waitingPlanes.poll().getPlane());
                     this.runways[i] = now;
                 }
+
             }
         }
         return landed;
