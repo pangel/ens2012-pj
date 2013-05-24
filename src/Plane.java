@@ -16,8 +16,8 @@ public class Plane {
         this.dest = dest;
 
         this.speed = (double)1000 /* km/h */ / (1000*3600); /* km/ms */
-        this.fuel = 1.5*(source.position.distance(dest.position));
-        this.initialFuel = 1.5*(source.position.distance(dest.position));
+        this.fuel = 0.5*(source.position.distance(dest.position))/this.speed;
+        this.initialFuel = this.fuel;
 
     }
 
@@ -131,14 +131,17 @@ public class Plane {
     
     public boolean isNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
+        
         Point3D b = p2.getPosition ();
-        return (a.distance(b) < 5);
+       
+        return (a.distance(b) < 10 && p1 != p2);
+        
     } 
     
     public boolean isTooNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
         Point3D b = p2.getPosition ();
-        return (a.distance(b) < 1);
+        return (a.distance(b) < 1 && p1 != p2);
     }
     
     /**
@@ -182,8 +185,9 @@ public class Plane {
         boolean acc = false;
         Iterator<Plane> it = hash.iterator ();
     while (it.hasNext ()) {
-            Plane a = it.next ();
-            acc = acc | isNear (p,a);
+            Plane a = it.next ();            
+            acc = acc || isNear (p,a);
+            
     }
     return acc;
     }
@@ -192,7 +196,7 @@ public class Plane {
         Iterator<Plane> it = hash.iterator ();
     while (it.hasNext ()) {
             Plane a = it.next ();
-            acc = acc | isTooNear (p,a);
+            acc = acc || (isTooNear (p,a) && p != a);
     }
     return acc;
     }
@@ -202,7 +206,7 @@ public class Plane {
         boolean acc = false;
         Iterator<Plane> it = hash.iterator ();
         Plane a = it.next ();
-    while (it.hasNext () && !isNear (p,a) ) {
+    while (it.hasNext () && (!isNear (p,a) || p == a) ) {
             a = it.next ();
                }
     return a;

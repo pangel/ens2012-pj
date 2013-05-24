@@ -64,11 +64,11 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
 
 
 //
-        this.makeAirport("Winterfell", GlobalData.toKm(300), GlobalData.toKm(280), 0, 2);
-        this.makeAirport("Dothraki Sea", GlobalData.toKm(700), GlobalData.toKm(600), 10, 2);
-        this.makeAirport("Quarth", GlobalData.toKm(900), GlobalData.toKm(900), 0, 2);
-        this.makeAirport("King's landing", GlobalData.toKm(385), GlobalData.toKm(530), 0, 2);
-        this.makeAirport("Lannisport", GlobalData.toKm(120), GlobalData.toKm(700), 0, 2);
+  //      this.makeAirport("Winterfell", GlobalData.toKm(300), GlobalData.toKm(280), 0, 2);
+  //      this.makeAirport("Dothraki Sea", GlobalData.toKm(700), GlobalData.toKm(600), 10, 2);
+  //      this.makeAirport("Quarth", GlobalData.toKm(900), GlobalData.toKm(900), 0, 2);
+  //      this.makeAirport("King's landing", GlobalData.toKm(385), GlobalData.toKm(530), 0, 2);
+  //      this.makeAirport("Lannisport", GlobalData.toKm(120), GlobalData.toKm(700), 0, 2);
 //        this.makeAirport("Volantis", 20, 20, 0, 2);
         this.makeAirport("The Wall", GlobalData.toKm(380), GlobalData.toKm(90), 0, 2);
         this.makeAirport("Pyke Castle", GlobalData.toKm(130), GlobalData.toKm(580), 0, 2);
@@ -108,36 +108,42 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 Iterator<Plane> it = this.planes.iterator();
                 while (it.hasNext()) {
                     Plane plane = it.next();
-                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT) {
+                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT || plane.getStatus() == FlightStatus.STATUS_EMERGENCY) {
 //                        SegmentTrajectory.update(plane, new Date());
                         Date now = new Date();
                         Date last = plane.getLastUpdate();
                         plane.getTrajectory().update(now, last, plane.getSpeed());
                         plane.setLastUpdate(now);
-                        plane.setFuel(plane.fuel - (now.getTime() -last.getTime()*plane.speed));
-                        if (plane.fuel <= 0) {
-                          plane.setStatus(FlightStatus.STATUS_CRASHED);  
-                        }
-                        if (plane.collision(this.planes, plane)) {
-                            plane.setStatus(FlightStatus.STATUS_CRASHED);
-                        }
-                        if (plane.fuel < plane.initialFuel*0.1) {
-                            plane.setStatus(FlightStatus.STATUS_EMERGENCY);
-                            this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
-                        }
-                        if (plane.critical(this.planes, plane)) {
+                       plane.setFuel(plane.fuel - GlobalData.duration(now.getTime(),last.getTime()));                      
+                       if (plane.fuel <= 0) {
+                          plane.setStatus(FlightStatus.STATUS_CRASHED);                          
+                       }
+                       if (plane.collision(this.planes, plane)) {
+                           plane.setStatus(FlightStatus.STATUS_CRASHED);
+                           System.out.println("crash");
+                          
+                       }
+                       if (plane.fuel < plane.initialFuel*0.1) {
+                           System.out.println("fuelpeu");
+                           plane.setStatus(FlightStatus.STATUS_EMERGENCY);
+                           this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
+                      }
+                       if (plane.getSpeed() < 300/1000/3600) {
+                           plane.setStatus(FlightStatus.STATUS_CRASHED);
+                       }
+                       if (plane.critical(this.planes, plane)) {                           
                           Plane p2 = plane.isCritical(this.planes, plane);
                           Point3D pos1 = plane.getPosition ();
                           Point3D pos2 = p2.getPosition ();
                             if (pos1.z < pos2.z) {
                            Trajectory l = plane.getTrajectory();
                               Point3D a = l.current ();
-                              Point3D b = l.second ();
-                              Point3D c = Point3D.moins(b,a);
-                              Point3D d = Point3D.div(c, a.distance(b));
-                              Point3D m = new Point3D(a.x+d.x*2 , a.y+d.y*2 , a.z-2);
-                              Point3D n = new Point3D(m.x+d.x*5, m.y+d.y*5 , m.z);
-                              Point3D o = new Point3D(n.x+d.x*2, n.y+d.y*2 , n.z+2);                              
+//                              Point3D b = l.second ();
+//                              Point3D c = Point3D.moins(b,a);
+//                              Point3D d = Point3D.div(c, a.distance(b));
+                              Point3D m = new Point3D(a.x , a.y , a.z-2);
+                              Point3D n = new Point3D(m.x+15, m.y+15 , m.z);
+                              Point3D o = new Point3D(n.x, n.y , n.z+2);                              
                               l.insert3(m,n,o);
                             
                               
@@ -145,15 +151,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                             if (pos1.z >= pos2.z){
                               Trajectory l = plane.getTrajectory();
                               Point3D a = l.current ();
-                              Point3D b = l.second ();
-                              Point3D c = Point3D.moins(b,a);
-                              Point3D d = Point3D.div(c, a.distance(b));
-                              Point3D m = new Point3D(a.x+d.x*2 , a.y+d.y*2 , a.z+2);
-                              Point3D n = new Point3D(m.x+d.x*5, m.y+d.y*5 , m.z);
-                              Point3D o = new Point3D(n.x+d.x*2, n.y+d.y*2 , n.z-2); 
-                              System.out.println(plane.getID());
-                              System.out.println(m.z);
-                              System.out.println(a.z);
+//                              Point3D b = l.second ();
+//                              Point3D c = Point3D.moins(b,a);
+//                              Point3D d = Point3D.div(c, a.distance(b));
+                              Point3D m = new Point3D(a.x , a.y , a.z+2);
+                              Point3D n = new Point3D(m.x+15, m.y+15 , m.z);
+                              Point3D o = new Point3D(n.x, n.y , n.z-2);                              
                               l.insert3(m,n,o);
                                 
                             }
