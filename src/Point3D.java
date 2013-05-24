@@ -88,14 +88,14 @@ public class Point3D {
     
         
     void normalize() {
-        if (this.x < 0) { this.x = this.x + GlobalData.mapWidth(); }
-        if (this.x > GlobalData.mapWidth()) { this.x = this.x - GlobalData.mapWidth(); }
+        if (this.x < 0) { this.x = this.x + World.mapWidth(); }
+        if (this.x > World.mapWidth()) { this.x = this.x - World.mapWidth(); }
     }    
     
     Point3D convertFor(Point3D other) {
         Point3D alt0 = new Point3D(this.x,this.y,this.z);
-        Point3D alt1 = new Point3D(this.x+GlobalData.mapWidth(),this.y,this.z);
-        Point3D alt2 = new Point3D(this.x-GlobalData.mapWidth(),this.y,this.z);
+        Point3D alt1 = new Point3D(this.x+World.mapWidth(),this.y,this.z);
+        Point3D alt2 = new Point3D(this.x-World.mapWidth(),this.y,this.z);
         
         double d0 = Point3D.euclideanDistance(alt0,other);
         double d1 = Point3D.euclideanDistance(alt1, other);

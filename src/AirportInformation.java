@@ -11,7 +11,7 @@ public class AirportInformation extends AirportCharacteristics {
     public AirportInformation(AirportCharacteristics ac)
 	{
 		super(ac);
-                this.waitingPlanes = new ArrayList<>();
+                this.waitingPlanes = new LinkedList<>();
 	}
 	AirportStatus getStatus(){
 		return status;
@@ -26,5 +26,5 @@ public class AirportInformation extends AirportCharacteristics {
 	/**
      *
      */
-    protected Collection<FlightID> waitingPlanes;
+    protected Queue<FlightID> waitingPlanes;
 }

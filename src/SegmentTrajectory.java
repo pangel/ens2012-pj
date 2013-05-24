@@ -38,11 +38,11 @@ public class SegmentTrajectory implements Trajectory {
         return this.data.get(1);
     }
 
-    public void update ( Date date, Date last_update, double speed)
+    public void update (double dt, double speed)
 
     { 	ArrayList<Point3D> trajectory = data;
 //            System.out.println(data);    
-	double dt = GlobalData.duration(date.getTime(),last_update.getTime());
+//	double dt = World.duration(date.getTime(),last_update.getTime());
 	int i = 0;
 	Point3D dernier = null;
 

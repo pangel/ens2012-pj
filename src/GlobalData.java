@@ -13,30 +13,7 @@ public class GlobalData implements ControllerDataInterface {
     /**
      *
      */
-//    public static final double mapWidth = 300;
-    public static final double earthRadius = 50;
-    public static double speedup = 1000; // Contraction temporelle
-    
-    public static double mapWidth() {
-//        return 2 * Math.PI * earthRadius;
-        return 40000; // 40km de large, 64km par pixel, 625 pixels de large
-    }
-   
-    public static double earthRadius() {
-        return earthRadius;
-    }
-    
-    public static double toPixel(double i) {
-        return i/64;
-    }
-    
-    public static double toKm(double i) {
-        return i*64;
-    }
-    
-    public static double duration(double now, double before) {
-        return (now - before)*speedup;
-    }
+
  
     public GlobalData(){
 	    this.airports = new ArrayList<Airport>();

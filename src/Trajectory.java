@@ -13,7 +13,7 @@ public interface Trajectory {
      * @param last_update
      * @param speed
      */
-    public void update ( Date date, Date last_update, double speed);
+    public void update ( double dt, double speed);
     /**
      *
      * @return

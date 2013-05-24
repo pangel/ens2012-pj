@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -8,7 +10,7 @@ import java.util.Iterator;
  */
 public class Airport extends AirportInformation {
 
-    private final long[] runways;
+    private final double[] runways;
 
     /**
      *
@@ -16,7 +18,7 @@ public class Airport extends AirportInformation {
      */
     public Airport(AirportCharacteristics ac) {
         super(ac);
-        this.runways = new long[this.numberOfRunways];
+        this.runways = new double[this.numberOfRunways];
     }
 
     /**
@@ -44,18 +46,22 @@ public class Airport extends AirportInformation {
         waitingPlanes.remove(id);
     }
 
-    public void landNextPlane() {
+    public Collection<Plane> landPlanes() {
+        Collection<Plane> landed = new ArrayList<>();
         synchronized (waitingPlanes) {
-            Iterator<FlightID> it = waitingPlanes.iterator();
-            if (it.hasNext()) {
-                waitingPlanes.remove(it.next());
+            double now = new Date().getTime();
+            for (int i = 0; i < this.runways.length; i++) {
+                while(waitingPlanes.peek() != null && waitingPlanes.peek().getPlane().getStatus() != FlightStatus.STATUS_WAITING_LANDING) {
+                    waitingPlanes.poll();
+                }
+
+                if (waitingPlanes.peek() != null && (this.runways[i] == 0 || World.duration(now, this.runways[i]) >= World.sToMs(100))) {
+                    landed.add(waitingPlanes.poll().getPlane());
+                    this.runways[i] = now;
+                }
             }
         }
-        for (int i = 0; i < this.runways.length; i++) {
-            if (this.runways[i] == 0 || this.runways[i] <= new Date().getTime() - 100 * 1000) {        
-                this.runways[i] = new Date().getTime();
-            }
-        }
+        return landed;
     }
 
     public String toString() {
@@ -64,7 +70,7 @@ public class Airport extends AirportInformation {
 
     public boolean acceptLanding() {
         for (int i = 0; i < this.runways.length; i++) {
-            if (this.runways[i] == 0 || this.runways[i] <= new Date().getTime() - 100 * 1000) {
+            if (this.runways[i] == 0 || World.duration(new Date().getTime(), this.runways[i]) <= World.sToMs(100)) {        
                 return true;
             }
         }

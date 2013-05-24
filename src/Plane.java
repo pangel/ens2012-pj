@@ -14,7 +14,7 @@ public class Plane {
         this.id = id;
         this.source = source;
         this.dest = dest;
-
+        this.speedRatio = 1;
         this.speed = (double)1000 /* km/h */ / (1000*3600); /* km/ms */
         this.fuel = 0.5*(source.position.distance(dest.position))/this.speed;
         this.initialFuel = this.fuel;
@@ -90,7 +90,7 @@ public class Plane {
      * @return
      */
     public double getSpeed() {
-        return speed;
+        return speed * speedRatio;
     }
 
     /**
@@ -117,6 +117,10 @@ public class Plane {
         status = s;
     }
 
+    public void setSpeedRatio(double s) {
+        speedRatio = s;
+    }
+    
     /**
      *
      * @param d
@@ -141,6 +145,9 @@ public class Plane {
     public boolean isTooNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
         Point3D b = p2.getPosition ();
+//        if (p1 == null) { System.out.println("p1 is null"); }
+//        if (p2 == null) { System.out.println("p2 is null"); }
+
         return (a.distance(b) < 1 && p1 != p2);
     }
     
@@ -177,6 +184,7 @@ public class Plane {
     private FlightID id;
     public double fuel;
     public double initialFuel;
+    private double speedRatio;
     
     void setDestination(Airport destination) {
         this.dest = destination;

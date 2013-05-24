@@ -15,9 +15,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private GlobalData globalData;
     private Collection<Plane> planes;
     private LinkedBlockingQueue<Runnable> transmissions;
+    private Collection<Weather> weathers;
     private Controller controller;
     private Airport airportA;
     private Airport airportB;
+    private double startTime = 0;
+    private boolean useScenario = true;
 
     /**
      *
@@ -61,29 +64,40 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
 
 
         this.controller.setSimulator(this);
+        
+        if (this.useScenario) {
+            new ScenarioParser(this);
+        } else {
 
+            this.makeAirport("Winterfell", World.pxToKm(300), World.pxToKm(280), 0, 2);
+            this.makeAirport("Dothraki Sea", World.pxToKm(700), World.pxToKm(600), 10, 2);
+            this.makeAirport("Quarth", World.pxToKm(900), World.pxToKm(900), 0, 2);
+            this.makeAirport("King's landing", World.pxToKm(385), World.pxToKm(530), 0, 2);
+            this.makeAirport("Lannisport", World.pxToKm(120), World.pxToKm(700), 0, 2);
+            this.makeAirport("The Wall", World.pxToKm(380), World.pxToKm(90), 0, 2);
+            this.makeAirport("Pyke Castle", World.pxToKm(130), World.pxToKm(580), 0, 2);
 
-//
-  //      this.makeAirport("Winterfell", GlobalData.toKm(300), GlobalData.toKm(280), 0, 2);
-  //      this.makeAirport("Dothraki Sea", GlobalData.toKm(700), GlobalData.toKm(600), 10, 2);
-  //      this.makeAirport("Quarth", GlobalData.toKm(900), GlobalData.toKm(900), 0, 2);
-  //      this.makeAirport("King's landing", GlobalData.toKm(385), GlobalData.toKm(530), 0, 2);
-  //      this.makeAirport("Lannisport", GlobalData.toKm(120), GlobalData.toKm(700), 0, 2);
-//        this.makeAirport("Volantis", 20, 20, 0, 2);
-        this.makeAirport("The Wall", GlobalData.toKm(380), GlobalData.toKm(90), 0, 2);
-        this.makeAirport("Pyke Castle", GlobalData.toKm(130), GlobalData.toKm(580), 0, 2);
-//        
-//        this.makeAirport("East", 10,300,0,2);
-//        this.makeAirport("West", 700,300,0,2);
-
+            this.makeWeather(0.2, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+        }
+        
+        
         this.gui.setAirports(this.globalData.airports);
+        this.gui.setWeathers(this.weathers);
         this.gui.setPlanes(this.planes);
     }
 
     public Airport makeAirport(String name, double x, double y, double z, int runways) {
+        System.out.println("Making airport " + name + "," + x + "," + y + "," + z);
         Airport airport = new Airport(new AirportCharacteristics(name, new Point3D(x, y, z), runways));
         this.globalData.airports.add(airport);
         return airport;
+    }
+    
+    public Weather makeWeather(double speedRatio, double lon1, double lat1, double lon2, double lat2, double startTime, double endTime, double dx, double dy) {
+        Weather weather = new Weather(speedRatio,lon1,lat1,lon2,lat2,startTime,endTime,dx,dy);
+        this.weathers.add(weather);
+        return weather;
     }
 
     /**
@@ -96,6 +110,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.globalData = globalData;
         this.planes = Collections.synchronizedSet(new HashSet<Plane>());
         this.transmissions = new LinkedBlockingQueue<Runnable>();
+        this.weathers = Collections.synchronizedSet(new HashSet<Weather>());
     }
 
     /**
@@ -103,35 +118,71 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      * planes, answering to the queries..
      */
     private void simulate() {
+        double startTime, time,now,last,dt;
+        startTime = last = new Date().getTime();
+        
         while (true) {
+            now = new Date().getTime();
+            time = World.duration(now,startTime);
+            dt = World.duration(now,last);
+            last = now;
+            
+            synchronized(this.weathers) {    
+                Iterator<Weather> it = this.weathers.iterator();
+                while (it.hasNext()) {
+                    Weather weather = it.next();
+                    weather.setActive(time);
+                    if (weather.getActive()) {
+                        weather.update(dt);
+                    }
+                }
+            }
             synchronized (this.planes) {
                 Iterator<Plane> it = this.planes.iterator();
                 while (it.hasNext()) {
+               
                     Plane plane = it.next();
-                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT || plane.getStatus() == FlightStatus.STATUS_EMERGENCY) {
-//                        SegmentTrajectory.update(plane, new Date());
-                        Date now = new Date();
-                        Date last = plane.getLastUpdate();
-                        plane.getTrajectory().update(now, last, plane.getSpeed());
-                        plane.setLastUpdate(now);
-                       plane.setFuel(plane.fuel - GlobalData.duration(now.getTime(),last.getTime()));                      
+                    
+                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT || 
+                        plane.getStatus() == FlightStatus.STATUS_EMERGENCY) {  
+                        double speedRatio = 1;
+                        
+                        synchronized (this.weathers) {
+                            Iterator<Weather> it2 = this.weathers.iterator();
+                            while (it2.hasNext()) {
+                                Weather weather = it2.next();
+                                if (weather.getActive() && weather.contains(plane.getPosition())) {
+                                    speedRatio *= weather.speedRatio;
+                                }
+                            }
+                        }
+                        
+                        plane.setSpeedRatio(speedRatio);
+                        
+                        plane.getTrajectory().update(dt, plane.getSpeed());
+                        plane.setLastUpdate(new Date((long)now));
+                    }
+                    
+                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT || 
+                        plane.getStatus() == FlightStatus.STATUS_EMERGENCY || 
+                        plane.getStatus() == FlightStatus.STATUS_WAITING_LANDING) {
+                        
+                       plane.setFuel(plane.fuel - dt);                      
                        if (plane.fuel <= 0) {
-                          plane.setStatus(FlightStatus.STATUS_CRASHED);                          
+                           plane.setStatus(FlightStatus.STATUS_CRASHED);                          
                        }
                        if (plane.collision(this.planes, plane)) {
                            plane.setStatus(FlightStatus.STATUS_CRASHED);
-                           System.out.println("crash");
-                          
                        }
                        if (plane.fuel < plane.initialFuel*0.1) {
-                           System.out.println("fuelpeu");
                            plane.setStatus(FlightStatus.STATUS_EMERGENCY);
                            this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
                       }
-                       if (plane.getSpeed() < 300/1000/3600) {
+
+                       if (plane.getSpeed() < (double)300/1000/3600) {
                            plane.setStatus(FlightStatus.STATUS_CRASHED);
                        }
-                       if (plane.critical(this.planes, plane)) {                           
+                       if (plane.critical(this.planes, plane)) {
                           Plane p2 = plane.isCritical(this.planes, plane);
                           Point3D pos1 = plane.getPosition ();
                           Point3D pos2 = p2.getPosition ();
@@ -162,12 +213,16 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                             }
                         }
          
+                    }
+                            
+                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT) {
                         if (plane.getTrajectory().terminated()) {
                             plane.setStatus(FlightStatus.STATUS_WAITING_LANDING);
                             this.controller.requestLanding(plane.getID());
                         }
                     }
                 }
+        
             }
             this.gui.repaintMap();
             
@@ -179,9 +234,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             
             for (Airport airport : this.globalData.airports) {
                 //System.out.println("Airport " + airport + " : " + airport.acceptLanding() + ","+airport.acceptWaiting());
-                while (!airport.waitingPlanes.isEmpty() && airport.acceptLanding()) {
-                    System.out.println("Landing a plane at " + airport);
-                    airport.landNextPlane();
+//                System.out.println("ETat airport " + airport.name + " empty? " + airport.waitingPlanes.isEmpty() + " accept? " + airport.acceptLanding());
+                Collection<Plane> landed = airport.landPlanes();
+                for (Plane plane : landed) {
+                    this.planes.remove(plane);
                 }
             }
             
@@ -362,7 +418,6 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 Plane plane = id.getPlane();
                 plane.setLandingDate(date);
                 destination.addWaitingPlane(id);
-                self.planes.remove(plane);
             }
             public String toString() {
                 return "" + destination.name + "sera détruit dans" + (diff/1000) + " secondes !";
@@ -432,5 +487,9 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void setController(Controller controller) {
         this.controller = controller;
+    }
+    
+    public double time() {
+        return World.duration(new Date().getTime(),startTime);
     }
 }
