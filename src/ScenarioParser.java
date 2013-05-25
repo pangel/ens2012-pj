@@ -4,7 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Locale;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,14 +23,23 @@ import java.util.logging.Logger;
  * @author hp
  */
 public class ScenarioParser {
-    ScenarioParser(Simulator sim) {
-
+    public static Queue<Plane> parseWith(Simulator sim, GlobalData gb) {
+        Queue<Plane> scenarioPlanes = new PriorityQueue<>(10, new Comparator<Plane>() {
+            @Override
+            public int compare(Plane p1, Plane p2) {
+                double p1s = p1.getStartTime();
+                double p2s = p2.getStartTime();
+                if (p1s < p2s) { return -1; }
+                if (p2s < p1s) { return 1; }
+                return 0;
+            }
+        });
         InputStream inputStream;
         try {
             inputStream = new FileInputStream("scenario.sc");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ScenarioParser.class.getName()).log(Level.SEVERE, null, ex);
-            return;
+            return null;
         }
         BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
         Scanner s = new Scanner(r);
@@ -78,11 +91,14 @@ public class ScenarioParser {
         s.next("PLANES");
         s.nextLine();
         while(s.hasNextLine()) {
-            System.out.println("==PLANE==");
+         
             s.next("PLANE");
             String source = s.next();
             String dest = s.next();
-            double planeStartTime = s.nextDouble();
+            double planeStartTime = World.hToMs(s.nextDouble());
+            FlightID id = new FlightID();
+            Plane plane = new Plane(id, gb.getAirportByName(source),gb.getAirportByName(dest));
+            plane.setStartTime(planeStartTime);
             s.nextLine();
             
             while(!s.hasNext("PLANE") && s.hasNextLine()) {
@@ -90,22 +106,19 @@ public class ScenarioParser {
                 System.out.println("Line: " + line);
                 String[] m = line.split(",");
                 if (m.length == 2) {
-                    System.out.println("Silence");
+                    plane.setSilence(new Silence(World.hToMs(Double.parseDouble(m[0])), World.hToMs(Double.parseDouble(m[1]))));
                 } else if (m.length == 4) {
-                    System.out.println("Trajectoire");
+                     plane.setError(new TrajectoryError(World.hToMs(Double.parseDouble(m[0])), World.hToMs(Double.parseDouble(m[1])), Double.parseDouble(m[2]), Double.parseDouble(m[3])));
                 } else {
-                    System.out.println("ERREUR");
+                     throw new IllegalArgumentException("Ligne impossible pour caractéristique de PLANE");
                 }
             }
 
-           
+          scenarioPlanes.add(plane);
         }
+        return scenarioPlanes;
     }
         
         
-    public static void main(String[] argv) {
-        ScenarioParser s = new ScenarioParser(null);
-    }
-
 
 }

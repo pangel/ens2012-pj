@@ -16,6 +16,13 @@ public class TrajectoryError {
     private double dx;
     private double dy;
     
+    TrajectoryError(double startTime, double endTime, double dx, double dy) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.dx = dx;
+        this.dy = dy;
+    }
+    
     public double getStartTime () {
     return startTime;    
 }

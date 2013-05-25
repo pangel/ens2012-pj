@@ -42,7 +42,7 @@ public class Statistics {
     return nb_landing;
 }
     public static double getAverageTime (){
-    return sum_time/nb_landing;
+    return nb_landing == 0 ? 0 : sum_time/nb_landing;
         }
     
     

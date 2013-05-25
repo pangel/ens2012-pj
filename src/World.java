@@ -54,6 +54,10 @@ public class World {
         return s * 1000;
     }
     
+    public static double msToH(double ms) {
+        return ms/(1000*3600);
+    }
+    
     // Elapsed time in milliseconds, with speedup factor
     public static double duration(double now, double before) {
         return (now - before)*speedup;

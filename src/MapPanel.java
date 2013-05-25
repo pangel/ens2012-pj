@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -40,13 +39,17 @@ public class MapPanel extends JPanel {
         } catch (IOException ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        for (Point3D crash: this.crashes) {
+            this.drawDot(crash.x, crash.y, Color.black);
+        }
+                
         if (this.airports != null) {
             for (Airport airport : this.airports) {
-//                System.out.println("Airport drawing: " + airport.name + " / " + airport.position.x + ":" + World.kmToPx(airport.position.x) + "," + airport.position.y + ":" + World.kmToPx(airport.position.y));
                 this.drawDot(airport.position.x, airport.position.y, Color.red);
             }
         }
-        
+                
         if (this.planes != null) {
             synchronized (this.planes) {
                 Iterator<Plane> it = this.planes.iterator();
@@ -64,18 +67,12 @@ public class MapPanel extends JPanel {
             }
         }
         
-        for (Point3D crash: this.crashes) {
-            this.drawDot(crash.x, crash.y, Color.black);
-        }
-        
         if (this.weathers != null) {
             synchronized (this.weathers) {
-//                System.out.println(this.weathers.size());
                 Iterator<Weather> it = this.weathers.iterator();
                 while (it.hasNext()) {
                     Weather weather = it.next();
                     if (weather.getActive()) {
-//                        System.out.println(weather);
                         Color col = new Color((float)(1-weather.speedRatio),(float)0.05,(float)weather.speedRatio,(float)0.4);
                         Point3D p1 = weather.p1, p2 = weather.p2;
                         if (p1.x > p2.x) {
@@ -89,6 +86,7 @@ public class MapPanel extends JPanel {
                 }
             }
         }
+
     }
 
     

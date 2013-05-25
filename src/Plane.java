@@ -19,8 +19,9 @@ public class Plane {
         this.speed = (double)1000 /* km/h */ / (1000*3600); /* km/ms */
         this.fuel = 1.5*(source.position.distance(dest.position))/this.speed;
         this.initialFuel = this.fuel;
-        this.listError = new LinkedList();
-        this.listSilence = new LinkedList();
+        this.listError = new LinkedList<>();
+        this.listSilence = new LinkedList<>();
+        this.startTime = new Date().getTime();
     }
 
     /**
@@ -192,6 +193,7 @@ public class Plane {
     private FlightID id;
     public double fuel;
     public double initialFuel;
+    private double startTime;
 
 
     private double speedRatio;
@@ -201,6 +203,14 @@ public class Plane {
 
     public Collection<TrajectoryError> listError;
     public Collection<Silence> listSilence;
+    
+    void setStartTime(double time) {
+        this.startTime = time;
+    }
+    
+    double getStartTime() {
+        return this.startTime;
+    }
 
     void setDestination(Airport destination) {
         this.dest = destination;
@@ -239,12 +249,11 @@ public class Plane {
     public static boolean inerror (double d,Plane p) {
         boolean acc = false;
         Iterator<TrajectoryError> it = p.listError.iterator ();
-        if (p.listError.size() != 0) {
-        TrajectoryError a = it.next();
+        TrajectoryError a;
         while (it.hasNext()) {
+            a = it.next();
              acc = acc || (d > a.getStartTime() && d < a.getEndTime());
-             a = it.next();
-        }
+            
         }
         return acc;
         

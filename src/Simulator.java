@@ -17,10 +17,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private LinkedBlockingQueue<Runnable> transmissions;
     private Collection<Weather> weathers;
     private Controller controller;
+    private Queue<Plane> scenarioPlanes;
     private Airport airportA;
     private Airport airportB;
-    private double startTime = 0;
-    private boolean useScenario = false;
+    private boolean useScenario = true;
 
     /**
      *
@@ -67,7 +67,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         this.controller.setSimulator(this);
         
         if (this.useScenario) {
-            new ScenarioParser(this);
+            this.scenarioPlanes = ScenarioParser.parseWith(this, this.globalData);
         } else {
 
             this.makeAirport("Winterfell", World.pxToKm(300), World.pxToKm(280), 0, 2);
@@ -78,8 +78,8 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             this.makeAirport("The Wall", World.pxToKm(380), World.pxToKm(90), 0, 2);
             this.makeAirport("Pyke Castle", World.pxToKm(130), World.pxToKm(580), 0, 2);
 
-            this.makeWeather(0.2, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
-            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+//            this.makeWeather(0.2, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+//            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
         }
 
         this.gui.setAirports(this.globalData.airports);
@@ -129,7 +129,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             now = new Date().getTime();
             time = World.duration(now,startTime);
             dt = World.duration(now,last);
-            last = now;
+            
             
             
             synchronized(this.weathers) {    
@@ -162,13 +162,31 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                             }
                         }
                         
-                        plane.setSpeedRatio(speedRatio);
                         
+                        double oldx = plane.getTrajectory().current().x;
+                        double oldy = plane.getTrajectory().current().y;
+                        
+                        plane.setSpeedRatio(speedRatio);
                         plane.getTrajectory().update(dt, plane.getSpeed());
-                                               
-                        if (Plane.inerror(new Date().getTime(), plane)) {
-                          TrajectoryError error = plane.isinerror((double)new Date().getTime());
-                          Point3D e = new Point3D(error.getdx()*plane.getSpeed()*(last-now),error.getdy()*plane.getSpeed()*(last-now),plane.getTrajectory().current().z);
+                        
+                                   
+                        double flightTime = World.duration(now,plane.getTakeoffDate().getTime());
+                        if (Plane.inerror(flightTime, plane)) {
+                          
+                          TrajectoryError error = plane.isinerror(flightTime);
+                          
+                          Point3D current = plane.getTrajectory().current();
+                          // Use error vector as rotation
+                          double vx = current.x - oldx;
+                          double vy = current.y - oldy;
+                          
+                          double ex = error.getdx();
+                          double ey = error.getdy();
+                          
+                          double nvx = vx*ex - vy*ey;
+                          double nvy = vy*ex - vx*ey;
+                          
+                          Point3D e = new Point3D(oldx + nvx, oldy + nvy, current.z);
                           plane.getTrajectory().modify1 (e);                      
                         }
                         
@@ -247,7 +265,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 }
         
             }
-            this.gui.repaintMap();
+            this.gui.repaintAll();
             
             Runnable task;
             task = this.transmissions.poll();
@@ -265,13 +283,34 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                 }
             }
             
+            last = now;
+            
             try {
                 Thread.sleep(30);
                 
-                if (Math.random() < 0.10*90/500) { 
-                    Pair<Airport, Airport> trip = this.getRandomTrip();
+                if (this.useScenario) {
+                    while (scenarioPlanes.peek() != null && scenarioPlanes.peek().getStartTime() <= time) {
+                        Plane plane = scenarioPlanes.poll();
+                        this.controller.requestNewFlightCustom(plane.getID());
+                    }
+                } else {
+                    if (Math.random() < 0.10*90/500) { 
+                        Pair<Airport, Airport> trip = this.getRandomTrip();
+                        FlightID id = new FlightID();
                     
-                    this.controller.requestNewFlight(trip.fst.id, trip.snd.id);
+                        Airport wf = this.globalData.getAirportByName("Winterfell");
+                        Airport wa = this.globalData.getAirportByName("The Wall");
+                    
+                        Plane plane = new Plane(id, trip.fst, trip.snd);
+                        if (Math.random() < 0.3) {
+                            double errorStart = Math.random()*2;
+                            double errorEnd   = errorStart + Math.random()*4;
+                            double dx = Math.random(), dy = Math.random();
+                            plane.setError(new TrajectoryError(World.hToMs(errorStart),World.hToMs(errorEnd),dx,dy));
+                        }
+                        this.controller.requestNewFlightCustom(id);
+//                    this.controller.requestNewFlightCustom(trip.fst.id, trip.snd.id);
+                    }
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
@@ -491,14 +530,17 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     @Override
     public void respondNewFlight(final FlightID id, final AirportID s, final AirportID d, final Trajectory traj) {
 //        System.out.println("respondNewFlight sync" + id + " " + s + " " + d);
-        final Simulator self = this;
-        
-            
+        final Simulator self = this;            
         
         Task r = new Task() {
             public void run() {
 //                System.out.println("respondNewFlight async" + id + " " + s + " " + d);
-                Plane plane = new Plane(id, self.globalData.getAirportByID(s), self.globalData.getAirportByID(d));                
+                Plane plane;
+                if (id.getPlane() != null) {
+                    plane = id.getPlane();
+                } else {
+                    plane = new Plane(id, self.globalData.getAirportByID(s), self.globalData.getAirportByID(d));
+                }
                 self.planes.add(plane);
                 plane.setTrajectory(traj);
                 plane.setStatus(FlightStatus.STATUS_WAITING_TAKEOFF);
@@ -524,9 +566,5 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
      */
     public void setController(Controller controller) {
         this.controller = controller;
-    }
-    
-    public double time() {
-        return World.duration(new Date().getTime(),startTime);
     }
 }

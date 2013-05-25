@@ -180,6 +180,30 @@ public class Controller implements ControllerCommandInterface {
             
         this.transmissions.add(r);
     }
+    
+    public void requestNewFlightCustom(final FlightID planeID) {
+//        System.out.println("requestNewFlight sync" + s + " " + d);
+        final Controller self = this;
+        final Airport source = planeID.getPlane().getInitialSourceAirport();
+        final Airport dest = planeID.getPlane().getInitialDestinationAirport();
+
+        Task r = new Task() {
+            public void run() {
+                Trajectory trajectory = new SegmentTrajectory(source.position, dest.position);
+                self.getSimulator().respondNewFlight(planeID, source.id, dest.id, trajectory);
+            }
+
+            public String toString() {
+                return "Éclore dragon à " + source.name + " pour détruire " + dest.name + " ?";
+            }
+
+            public TaskType type() {
+                return TaskType.REQUEST_NEWFLIGHT;
+            }
+        };
+            
+        this.transmissions.add(r);
+    }
 
     /**
      *

@@ -49,7 +49,8 @@ public class GlobalData implements ControllerDataInterface {
 	/**
      *
      * @param id
-     * @return
+     * @return airport
+     * @throws IllegalArgumentException
      */
     public Airport getAirportByID(AirportID id) {
 		for (Airport airport : this.airports) {
@@ -57,6 +58,17 @@ public class GlobalData implements ControllerDataInterface {
 		}
 		throw new IllegalArgumentException("unknown airport id");
 	}
+    /**
+    * @param name
+    * @return airport
+    * @return null
+    */
+    public Airport getAirportByName(String name) {
+        for (Airport airport : this.airports) {
+            if (airport.name == null ? name == null : airport.name.equals(name)) { return airport; }
+        }
+        return null;
+    }
 
 	/**
      *
@@ -65,11 +77,6 @@ public class GlobalData implements ControllerDataInterface {
      */
     public Collection<FlightID> getWaitingPlanes (AirportID id) {
 		return null;
-//		int i = 0;
-//		while(AirportCharacteristics.get(i).id != id){
-//			i++ 
-//			}
-//		return AirportCharacteristics.get(i).getWaitingsPlanes()
 		}
 //
 	/**
@@ -79,125 +86,5 @@ public class GlobalData implements ControllerDataInterface {
      */
     public AirportStatus getStatus(AirportID id){
 		return null;	
-//		int i = 0;
-//		while(AirportCharacteristics.get(i).id != id){
-//			i++ 
-//			}
-//		return AirportCharacteristics.get(i).getStatus()
-//
-//		}
-//		return AirportsCharacteristics.get(i).getWaitingsPlanes();
-//		i = 0;
     }
-//    AirportStatus getStatus(id AirportId){	
-//	 int i = 0;
-//	while(AirportsCharacteristics.get(i).id != id){
-//	    i++ ;
-//	}
-//	i = 0;
-//	return AirportsCharacteristics.get(i).getStatus();
-//    }
-
-//	Collection<FlightID> getWaitingPlanes (AirportID id) {
-//		int i = 0;
-//		while(AirportCharacteristics.get(i).id != id){
-//			i++ 
-//			}
-//		return AirportCharacteristics.get(i).getWaitingsPlanes()
-//		}
-//
-//	AirportStatus getStatus(AirportId id){	
-//		int i = 0;
-//		while(AirportCharacteristics.get(i).id != id){
-//			i++ 
-//			}
-//		return AirportCharacteristics.get(i).getStatus()
-//		}
-
 }
-
-	
-	
-
-//
-//abstract class Carrier {
-//	protected Simulator simulator;
-//	void execute() {}
-//}
-
-
-
-//class StatusCarrier extends Carrier {
-//	private FlightID id;
-//	private FlightStatus status;
-//	
-//	StatusCarrier(Simulator simulator, FlightID id) {
-//		this.simulator = simulator;
-//		this.id = id;
-//	}
-//	
-//	void execute() {
-//		FlightStatus status = this.simulator.getPlaneByID(this.id).getStatus();
-//		CONTROLLER.respondStatus(id, status);
-//	}
-//}
-//
-//class TrajectoryCarrier extends Carrier {
-//	private FlightID id;
-//	private FlightStatus status;
-//	
-//	StatusCarrier(Simulator simulator, FlightID id) {
-//		this.simulator = simulator;
-//		this.id = id;
-//	}
-//	
-//	void execute() {
-//		FlightStatus status = this.simulator.getPlaneByID(this.id).getStatus();
-//		CONTROLLER.respondStatus(id, status);
-//	}
-//}
-//
-//class StatusCarrier extends Carrier {
-//	private FlightID id;
-//	private FlightStatus status;
-//	
-//	StatusCarrier(Simulator simulator, FlightID id) {
-//		this.simulator = simulator;
-//		this.id = id;
-//	}
-//	
-//	void execute() {
-//		FlightStatus status = this.simulator.getPlaneByID(this.id).getStatus();
-//		CONTROLLER.respondStatus(id, status);
-//	}
-//}
-//
-//class StatusCarrier extends Carrier {
-//	private FlightID id;
-//	private FlightStatus status;
-//	
-//	StatusCarrier(Simulator simulator, FlightID id) {
-//		this.simulator = simulator;
-//		this.id = id;
-//	}
-//	
-//	void execute() {
-//		FlightStatus status = this.simulator.getPlaneByID(this.id).getStatus();
-//		CONTROLLER.respondStatus(id, status);
-//	}
-//}
-//
-//class StatusCarrier extends Carrier {
-//	private FlightID id;
-//	private FlightStatus status;
-//	
-//	StatusCarrier(Simulator simulator, FlightID id) {
-//		this.simulator = simulator;
-//		this.id = id;
-//	}
-//	
-//	void execute() {
-//		FlightStatus status = this.simulator.getPlaneByID(this.id).getStatus();
-//		CONTROLLER.respondStatus(id, status);
-//	}
-//}
