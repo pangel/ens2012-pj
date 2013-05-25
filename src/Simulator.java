@@ -78,8 +78,8 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             this.makeAirport("The Wall", World.pxToKm(380), World.pxToKm(90), 0, 2);
             this.makeAirport("Pyke Castle", World.pxToKm(130), World.pxToKm(580), 0, 2);
 
-//            this.makeWeather(0.2, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
-//            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+            this.makeWeather(0.35, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
         }
 
         this.gui.setAirports(this.globalData.airports);
@@ -186,6 +186,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                           double nvy = vy*ex - vx*ey;
                           
                           Point3D e = new Point3D(oldx + nvx, oldy + nvy, current.z);
+                          e.normalize();
                           plane.getTrajectory().modify1 (e);                      
                         }
                         
