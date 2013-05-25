@@ -88,7 +88,6 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     }
 
     public Airport makeAirport(String name, double x, double y, double z, int runways) {
-        System.out.println("Making airport " + name + "," + x + "," + y + "," + z);
         Airport airport = new Airport(new AirportCharacteristics(name, new Point3D(x, y, z), runways));
         this.globalData.airports.add(airport);
         return airport;

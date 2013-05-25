@@ -103,7 +103,6 @@ public class ScenarioParser {
             
             while(!s.hasNext("PLANE") && s.hasNextLine()) {
                 String line = s.nextLine();
-                System.out.println("Line: " + line);
                 String[] m = line.split(",");
                 if (m.length == 2) {
                     plane.setSilence(new Silence(World.hToMs(Double.parseDouble(m[0])), World.hToMs(Double.parseDouble(m[1]))));
