@@ -1,0 +1,11 @@
+120
+AIRPORTS
+20,-30,2,3,Quarth
+150,-60,2,3,Winterfell
+WEATHER
+0.8,160,80,-160,-10,-100,-10,0,100
+PLANES
+PLANE,Quarth,Winterfell,1
+1.7,2
+1.1,3
+0,5,1,1
