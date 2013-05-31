@@ -20,7 +20,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
     private Queue<Plane> scenarioPlanes;
     private Airport airportA;
     private Airport airportB;
-    private boolean useScenario = true;
+    public boolean useScenario = false;
 
     /**
      *
@@ -45,6 +45,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
 
 
         simulator.setController(controller);
+        simulator.useScenario = Arrays.asList(args).contains("scenario");
         simulator.setup();
         simulator.start();
 
@@ -70,16 +71,12 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
             this.scenarioPlanes = ScenarioParser.parseWith(this, this.globalData);
         } else {
 
-            this.makeAirport("Winterfell", World.pxToKm(300), World.pxToKm(280), 0, 2);
-            this.makeAirport("Dothraki Sea", World.pxToKm(700), World.pxToKm(600), 10, 2);
-            this.makeAirport("Quarth", World.pxToKm(900), World.pxToKm(900), 0, 2);
             this.makeAirport("King's landing", World.pxToKm(385), World.pxToKm(530), 0, 2);
-            this.makeAirport("Lannisport", World.pxToKm(120), World.pxToKm(700), 0, 2);
             this.makeAirport("The Wall", World.pxToKm(380), World.pxToKm(90), 0, 2);
             this.makeAirport("Pyke Castle", World.pxToKm(130), World.pxToKm(580), 0, 2);
 
-//            this.makeWeather(0.2, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
-//            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+            this.makeWeather(0.35, World.pxToKm(200),World.pxToKm(200),World.pxToKm(300),World.pxToKm(350),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
+            this.makeWeather(0.8, World.pxToKm(400),World.pxToKm(200),World.pxToKm(450),World.pxToKm(250),World.hToMs(0),World.hToMs(100),World.speedHToMs(100),World.speedHToMs(50));
         }
 
         this.gui.setAirports(this.globalData.airports);
@@ -123,13 +120,10 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
         startTime = last = new Date().getTime();
         
         while (true) {
-        
          
             now = new Date().getTime();
             time = World.duration(now,startTime);
             dt = World.duration(now,last);
-            
-            
             
             synchronized(this.weathers) {    
                 Iterator<Weather> it = this.weathers.iterator();
@@ -186,6 +180,7 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                           double nvy = vy*ex - vx*ey;
                           
                           Point3D e = new Point3D(oldx + nvx, oldy + nvy, current.z);
+                          e.normalize();
                           plane.getTrajectory().modify1 (e);                      
                         }
                         
@@ -203,17 +198,21 @@ public class Simulator extends Thread implements SimulatorCommandInterface {
                           plane.setStatus(FlightStatus.STATUS_CRASHED);
                           System.out.println("crash_fuel" + plane.getID());
                           Statistics.incrnb_crash_fuel ();
+                       } else if (plane.fuel < plane.initialFuel*0.1) {
+                           plane.setStatus(FlightStatus.STATUS_EMERGENCY);
+                           this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
                        }
+                    }
+
+                    if (plane.getStatus() == FlightStatus.STATUS_INFLIGHT || 
+                        plane.getStatus() == FlightStatus.STATUS_EMERGENCY) {
+
                        if (plane.collision(this.planes, plane)) {
                            plane.setStatus(FlightStatus.STATUS_CRASHED);
                            System.out.println("crash_collision" + plane.getID());
                            Statistics.incrnb_crash_collision ();
                        }
 
-                       if (plane.fuel < plane.initialFuel*0.1) {
-                           plane.setStatus(FlightStatus.STATUS_EMERGENCY);
-                           this.controller.requestEmergencyLanding(plane.getID(),plane.fuel);
-                      }
 
                        if (plane.getSpeed() < (double)300/1000/3600) {
                            plane.setStatus(FlightStatus.STATUS_CRASHED);

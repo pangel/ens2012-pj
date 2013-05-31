@@ -144,20 +144,23 @@ public class Plane {
     
     public boolean isNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
-        
         Point3D b = p2.getPosition ();
-       
-        return (a.distance(b) < 10 && p1 != p2);
+        if (a == null || b == null) {
+          return false;
+        } else { 
+          return (a.distance(b) < 10 && p1 != p2);
+        }
         
     } 
     
     public boolean isTooNear (Plane p1, Plane p2) {
         Point3D a = p1.getPosition ();
         Point3D b = p2.getPosition ();
-//        if (p1 == null) { System.out.println("p1 is null"); }
-//        if (p2 == null) { System.out.println("p2 is null"); }
-
-        return (a.distance(b) < 1 && p1 != p2);
+        if (a == null || b == null) {
+          return false;
+        } else { 
+          return (a.distance(b) < 1 && p1 != p2);
+        }
     }
     
     /**

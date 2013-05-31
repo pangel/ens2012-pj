@@ -15,11 +15,22 @@ import java.util.List;
 public class SegmentTrajectory implements Trajectory {
 	ArrayList<Point3D> data;
 	Date startDate;
+  Point3D last;
+
+  public void updateLast() {
+    if (this.data.isEmpty()) {
+      return;
+    } else {
+      this.last = this.data.get(0);
+    }
+  }
     
    public void insert3 (Point3D a, Point3D b, Point3D c) {
-       data.add(1,a);
-       data.add(2,b);
-       data.add(3,c);
+       if (data.size() >= 1) {
+         data.add(1,a);
+         data.add(2,b);
+         data.add(3,c);
+       }
    }
    public void modify1 (Point3D a) {
        data.get(0).x =a.x;
@@ -34,7 +45,7 @@ public class SegmentTrajectory implements Trajectory {
 
     public Point3D current() {
         if (this.data.isEmpty()) {
-            return null;
+            return this.last;
         } else {
             return this.data.get(0);
         }
@@ -72,6 +83,8 @@ public class SegmentTrajectory implements Trajectory {
             newA.normalize();
 
 	    trajectory.set(0, newA);
+
+      this.updateLast();
 				  
     }
 	 
@@ -81,6 +94,7 @@ public class SegmentTrajectory implements Trajectory {
 //		dernier = trajectory.get(0);
 //		trajectory.add(dernier);
 		}
+    this.updateLast();
     }	
 //    public static void change_trajectory ( ArrayList<Point3D> trajectory, Date date, Date last_update, ArrayList<Point3D> trajectory0, double speed)
 //    {	
@@ -96,6 +110,7 @@ public class SegmentTrajectory implements Trajectory {
 		this.data = new ArrayList<Point3D>();
 		this.data.add(start);
 		this.data.add(dest);
+    this.last = start;
     }
     
 	

@@ -26,6 +26,7 @@ import javax.swing.JSlider;
  */
 public class NewJFrame extends javax.swing.JFrame {
     private GUIController controller;
+    private boolean hasInit = false;
     
     /**
      * Creates new form NewJFrame
@@ -65,8 +66,14 @@ public class NewJFrame extends javax.swing.JFrame {
     }
      
     public void repaintAll() {
-        this.repaintStats();
-        this.mapPanel1.repaint();
+      if (this.hasInit == false) {
+        this.hasInit = true;
+        this.eclosionsAutoacceptBox.setSelected(this.controller.doesAutoAccept(TaskType.REQUEST_NEWFLIGHT));
+        this.decollagesAutoaccept.setSelected(this.controller.doesAutoAccept(TaskType.REQUEST_TAKEOFF));
+        this.destructionsAutoacceptBox.setSelected(this.controller.doesAutoAccept(TaskType.REQUEST_LANDING));
+      }
+      this.repaintStats();
+      this.mapPanel1.repaint();
     }
 
     public void repaintStats() {

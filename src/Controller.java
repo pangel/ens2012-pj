@@ -249,6 +249,7 @@ public class Controller implements ControllerCommandInterface {
     }
     
     private Airport nearestAirport(final Point3D position) {
+        if (position == null) { return null; }
         Airport closest = null;
         for (AirportCharacteristics charac : this.globalData.AirportCharacteristics()) {
             Airport airport = this.globalData.getAirportByID(charac.id);
@@ -315,17 +316,21 @@ public class Controller implements ControllerCommandInterface {
     public void autoAccept(TaskType taskType) {
         this.autoAccepts.add(taskType);
     }
-    
-    
 
-    void UnAutoAccept(TaskType taskType) {
+    public void UnAutoAccept(TaskType taskType) {
         this.autoAccepts.remove(taskType);
     }    
+
+    public boolean doesAutoAccept(TaskType taskType) {
+      return this.autoAccepts.contains(taskType);
+    }
     public void requestEmergencyLanding(FlightID id, double fuel) {
          if (id.getPlane().insilence((new Date() ).getTime())) {return;}
         Plane plane = id.getPlane ();
         Point3D pos = plane.getPosition();
-        Airport newDest = nearestAirport(pos);
-        plane.setDestination(newDest);
+        if (pos != null) { 
+          Airport newDest = nearestAirport(pos);
+          plane.setDestination(newDest);
+        }
     }
 }
